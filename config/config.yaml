@@ -1,0 +1,81 @@
+postgres:
+  connection_string: postgresql://postgres:alpinemaps@localhost/alpinemaps
+
+  functions:
+    peaks:
+      schema: public
+      function: peak_tile
+      minzoom: 10
+      properties:
+        name: text
+        long: double
+        lat: double
+        importance: double
+        importance_metric: int
+        # custom data
+        de_name: text
+        wikipedia: text
+        wikidata: text
+        importance_osm: text
+        prominence: text
+        summit_cross: text
+        summit_register: text
+        ele: int
+
+    cities:
+      schema: public
+      function: cities_tile
+      minzoom: 10
+      properties:
+        name: text
+        long: double
+        lat: double
+        importance: double
+        importance_metric: int
+        # custom data
+        de_name: text
+        wikipedia: text
+        wikidata: text
+        population: int
+        place: text
+        population_date: text
+        website: text
+
+    cottages:
+      schema: public
+      function: cottages_tile
+      minzoom: 10
+      properties:
+        name: text
+        long: double
+        lat: double
+        importance: double
+        importance_metric: int
+        # custom data
+        de_name: text
+        wikipedia: text
+        wikidata: text
+        description: text
+        capacity: text
+        opening_hours: text
+        reservation: text
+        electricity: text
+        shower: text
+        winter_room: text
+        phone: text
+        website: text
+        seasonal: text
+        internet_access: text
+        fee: text
+        addr_city: text
+        addr_street: text
+        addr_postcode: text
+        addr_housenumber: text
+        operator: text
+        type: text
+        access: text
+        ele: int
+        
+pmtiles:
+  paths:
+    - /config/eaws-regions.pmtiles

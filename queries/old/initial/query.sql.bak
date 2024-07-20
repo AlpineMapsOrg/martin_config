@@ -1,0 +1,226 @@
+-------------------------------------------------
+-------------------------------------------------
+----------------     VIEWS    -------------------
+-------------------------------------------------
+-------------------------------------------------
+
+-- view for peaks
+DROP VIEW IF EXISTS peaks;
+CREATE VIEW peaks AS 
+    -- general attributes (all features should have them)
+    SELECT osm_id as id,
+    planet_osm_point.name,
+    ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
+    ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
+    planet_osm_point.way,
+
+    -- feature specific
+    -- note for elevation:
+        -- ->trim resolves issues where meter is specified (e.g. "602 m")
+        -- ->decimal cast and flooring resolves issues where number was in decimal (e.g. "1060.0")
+    FLOOR(nullif(trim(trailing 'm' from ele), '')::decimal)::int as ele
+
+   FROM planet_osm_point
+  WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND ele IS NOT NULL
+  ORDER BY ele desc;
+;
+
+-------------------------------------------------
+-------------------------------------------------
+-------------     TILE HELPER    ----------------
+-------------------------------------------------
+-------------------------------------------------
+
+DROP FUNCTION IF EXISTS peak_tile_helper;
+
+
+CREATE OR REPLACE FUNCTION peak_tile_helper(integer, z integer, x integer, y integer)
+returns table (
+    -- NOTE: it is important to use the same order here as in the actual select query...
+    id bigint, 
+    name text, 
+    long double precision, 
+    lat double precision, 
+
+    ele integer
+    ) 
+
+language plpgsql
+as 
+$$
+begin
+    return query 
+        SELECT 
+            peaks.id, peaks.name, peaks.long, peaks.lat,
+
+            peaks.ele
+
+               
+            -- -- transform the point into the current vector tile -> x/y points lie within (0,4096)
+            -- -- this is necessary for vector tiles on a flat map like leaflet
+            
+
+        FROM peaks
+        -- only select points where the current position and current tile bbox overlap
+        WHERE ST_TRANSFORM(peaks.way,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+    ;
+end; 
+$$;
+
+
+           
+
+
+-------------------------------------------------
+-------------------------------------------------
+----------------     TILES    -------------------
+-------------------------------------------------
+-------------------------------------------------
+-- function for peak tiles
+CREATE OR REPLACE
+    FUNCTION peak_tile(z integer, x integer, y integer)
+    RETURNS bytea AS $$
+DECLARE
+    mvt bytea;
+BEGIN
+    IF (z < 10) THEN
+    -- highest peaks visible
+        SELECT INTO mvt ST_AsMVT(tile, 'peak_tile', 4096, 'geom', 'id') FROM (
+            SELECT *,
+                 ST_AsMVTGeom(
+                    ST_Transform(peaks.way, 3857),
+                    ST_TileEnvelope(z,x,y),
+                    4096, 64, true
+                ) as geom
+            FROM peak_tile_helper(z,x,y);
+
+
+
+            SELECT
+                id, name, long, lat,
+                ele,
+               
+                -- transform the point into the current vector tile -> x/y points lie within (0,4096)
+                -- this is necessary for vector tiles on a flat map like leaflet
+                ST_AsMVTGeom(
+                    ST_Transform(way, 3857),
+                    ST_TileEnvelope(z,x,y),
+                    4096, 64, true
+                ) as geom
+
+            FROM peaks
+            -- only select points where the current position and current tile bbox overlap
+            WHERE ST_TRANSFORM(way,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            ORDER BY ele DESC
+            LIMIT 1
+        ) as tile;
+    ELSE
+    -- all peaks visible
+        SELECT INTO mvt ST_AsMVT(tile, 'peak_tile', 4096, 'geom', 'id') FROM (
+            SELECT
+                id, name, long, lat,
+                ele,
+
+                -- transform the point into the current vector tile -> x/y points lie within (0,4096)
+                -- this is necessary for vector tiles on a flat map like leaflet
+                ST_AsMVTGeom(
+                    ST_Transform(way, 3857),
+                    ST_TileEnvelope(z,x,y),
+                    4096, 64, true
+                ) as geom
+
+            FROM peaks
+            -- only select points where the current position and current tile bbox overlap
+            WHERE ST_TRANSFORM(way,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+        ) as tile;
+
+     END IF;
+
+
+  RETURN mvt;
+END
+$$ LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE;
+
+
+
+
+
+
+
+-- SELECT planet_osm_point.name, ele, way FROM planet_osm_point WHERE planet_osm_point."natural" = 'peak'::text and planet_osm_point.name = 'Großglockner'::text LIMIT 10;
+
+
+-- SELECT
+--         ST_X(ST_TRANSFORM(way,4674)) AS LONG,
+--         ST_Y(ST_TRANSFORM(way,4674)) AS LAT,
+--         name,
+--         FLOOR(nullif(ele, '')::decimal)::int as ele,
+
+--         -- transform the point into the current vector tile -> x/y points lie within (0,4096)
+--         -- this is necessary for vector tiles on a flat map like leaflet
+--         ST_AsText(ST_AsMVTGeom(
+--             ST_Transform(way, 3857),
+--             ST_TileEnvelope(9,274,179),
+--             4096, 64, true
+--         )) as geom
+
+--     FROM peaks
+--     -- only select points where the current position and current bbox overlap
+--     WHERE name IS NOT NULL AND ele IS NOT NULL AND ST_TRANSFORM(way,4674) && ST_Transform(ST_TileEnvelope(9,274,179), 4674)
+--     ORDER BY ele DESC
+--     LIMIT 1;
+
+
+-- SELECT ST_AsText(test_tile(9,274,179));
+
+-- 4384,2878
+-- 4384,2878
+
+
+
+-- 28/143654912/94306304
+-- 21/1122304/736768
+-- 19/280576/184192
+
+
+
+SELECT * from peak_tile_helper(9,274,179) ORDER BY ele DESC LIMIT 1;
+
+
+-- SELECT pg_typeof(ST_AsMVTGeom(ST_Transform(peaks.way, 3857),ST_TileEnvelope(9,274,179),4096, 64, true)) as geom from peaks ORDER BY peaks.ele DESC LIMIT 1;
+
+
+
+
+
+-- CREATE OR REPLACE
+--     FUNCTION peak_tile(z integer, x integer, y integer)
+--     RETURNS bytea AS $$
+-- DECLARE
+--     mvt bytea;
+-- BEGIN
+--     -- NOTE it is possible to add if branches here for better individual configurations
+--     SELECT INTO mvt ST_AsMVT(tile, 'peak_tile', 4096, 'geom', 'id') FROM (
+--         SELECT
+--             id, name, long, lat,
+--             ele,
+           
+--             -- transform the point into the current vector tile -> x/y points lie within (0,4096)
+--             -- this is necessary for vector tiles on a flat map like leaflet
+--             ST_AsMVTGeom(
+--                 ST_Transform(way, 3857),
+--                 ST_TileEnvelope(z,x,y),
+--                 4096, 64, true
+--             ) as geom
+
+--         FROM peaks
+--         -- only select points where the current position and current tile bbox overlap
+--         WHERE ST_TRANSFORM(way,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+--         ORDER BY ele DESC
+--         -- possible to use z parameter here to to differentiate how much is returned per zoom level
+--         LIMIT 1
+--     ) as tile;
+
+--   RETURN mvt;
+-- END
+-- $$ LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE;
