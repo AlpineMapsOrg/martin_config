@@ -6,11 +6,11 @@ DROP INDEX distance_cities_zoom_idx;
 DROP INDEX cities_geom_idx;
 DROP INDEX cities_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_cities;
-DROP MATERIALIZED VIEW IF EXISTS cities;
+DROP MATERIALIZED VIEW IF EXISTS cities_temp;
 
 -- view for cities
 -- CREATE VIEW cities AS 
-CREATE MATERIALIZED VIEW cities AS
+CREATE MATERIALIZED VIEW cities_temp AS
     -- general attributes (all features should have them)
     SELECT osm_id as id,
         planet_osm_point.name,
@@ -19,11 +19,13 @@ CREATE MATERIALIZED VIEW cities AS
         planet_osm_point.way as geom,
 
         -- set population as importance_metric
-        COALESCE(substring(planet_osm_point.population FROM '[0-9]+')::int, 0) as importance_metric,
+        -- COALESCE(substring(planet_osm_point.population FROM '[0-9]+')::int, 0) as importance_metric,
+        COALESCE(substring(planet_osm_point.tags->'population' FROM '[0-9]+')::int, 0) as importance_metric,
 
         slice( -- only extracts attributes defined by array
             planet_osm_point.tags 
-                    || hstore('population', COALESCE(substring(planet_osm_point.population FROM '[0-9]+')::int, 0)::text)
+                    -- || hstore('population', COALESCE(substring(planet_osm_point.population FROM '[0-9]+')::int, 0)::text)
+                    || hstore('population', COALESCE(substring(planet_osm_point.tags->'population' FROM '[0-9]+')::int, 0)::text)
                     || hstore('place',  planet_osm_point.place),
             ARRAY[
                 'name:de',
@@ -47,11 +49,11 @@ CREATE MATERIALIZED VIEW cities AS
 
 
 CREATE INDEX cities_geom_idx
-  ON cities
+  ON cities_temp
   USING GIST (geom);
 
 CREATE INDEX cities_importance_metric_idx
-  ON cities(importance_metric);  -- automatcially uses b-tree
+  ON cities_temp(importance_metric);  -- automatcially uses b-tree
 
 
 -- we want to prioritize POIs with the higher distances to other POIs where the importance_metric is higher than itself.
@@ -78,7 +80,7 @@ WITH cd AS (
             THEN cd.dist
             ELSE ST_Distance(a.geom, b.geom)
         END)) as min_dist
-    FROM cd CROSS JOIN cities a LEFT JOIN cities b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+    FROM cd CROSS JOIN cities_temp a LEFT JOIN cities_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
     GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
     ORDER BY importance_metric DESC, min_dist DESC
 )
@@ -158,7 +160,6 @@ BEGIN
             FROM distance_cities
             WHERE zoom = 21 AND ST_TRANSFORM(distance_cities.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
-        
     END IF;
 
 

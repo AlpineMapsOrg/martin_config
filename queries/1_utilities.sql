@@ -1,6 +1,6 @@
 
 -- cluster_dists table is used to uniformly define the minimum dists between two POIs when looking at one zoom level
-DROP TABLE cluster_dists;
+DROP TABLE IF EXISTS cluster_dists;
 
 CREATE TABLE cluster_dists AS
 WITH RECURSIVE cd (zoom,dist) as (

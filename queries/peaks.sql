@@ -7,11 +7,11 @@ DROP INDEX distance_peaks_zoom_idx;
 DROP INDEX peaks_geom_idx;
 DROP INDEX peaks_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_peaks;
-DROP MATERIALIZED VIEW IF EXISTS peaks;
+DROP MATERIALIZED VIEW IF EXISTS peaks_temp;
 
 -- view for peaks
 -- CREATE VIEW peaks AS 
-CREATE MATERIALIZED VIEW peaks AS
+CREATE MATERIALIZED VIEW peaks_temp AS
     -- general attributes (all features should have them)
     SELECT osm_id as id,
         planet_osm_point.name,
@@ -19,11 +19,12 @@ CREATE MATERIALIZED VIEW peaks AS
         ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
         planet_osm_point.way as geom,
 
-        FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
+        -- FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
+        FLOOR(nullif(substring(planet_osm_point.tags->'ele' FROM '[0-9]+'), '')::decimal)::int as importance_metric,
 
         slice( -- only extracts attributes defined by array
             -- add ele to data field
-            planet_osm_point.tags || hstore('ele', FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int::text),
+            planet_osm_point.tags || hstore('ele', FLOOR(nullif(substring(planet_osm_point.tags->'ele' FROM '[0-9]+'), '')::decimal)::int::text),
             ARRAY[
                 'name:de',
                 'wikipedia',
@@ -37,16 +38,16 @@ CREATE MATERIALIZED VIEW peaks AS
         ) as data
 
     FROM planet_osm_point
-      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND ele IS NOT NULL
+      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND planet_osm_point.tags->'ele' IS NOT NULL
       ORDER BY importance_metric desc;
 
 
 CREATE INDEX peaks_geom_idx
-  ON peaks
+  ON peaks_temp
   USING GIST (geom);
 
 CREATE INDEX peaks_importance_metric_idx
-  ON peaks(importance_metric);  -- automatcially uses b-tree
+  ON peaks_temp(importance_metric);  -- automatcially uses b-tree
 
 
 -- we want to prioritize POIs with the higher distances to other POIs where the importance_metric is higher than itself.
@@ -74,7 +75,7 @@ WITH cd AS (
             THEN cd.dist
             ELSE ST_Distance(a.geom, b.geom)
         END)) as min_dist
-    FROM cd CROSS JOIN peaks a LEFT JOIN peaks b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+    FROM cd CROSS JOIN peaks_temp a LEFT JOIN peaks_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
     GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
     ORDER BY importance_metric DESC, min_dist DESC
 )

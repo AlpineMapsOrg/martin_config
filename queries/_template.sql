@@ -9,11 +9,10 @@ DROP INDEX distance_TEMPLATENAME_zoom_idx;
 DROP INDEX TEMPLATENAME_geom_idx;
 DROP INDEX TEMPLATENAME_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_TEMPLATENAME;
-DROP MATERIALIZED VIEW IF EXISTS TEMPLATENAME;
+DROP MATERIALIZED VIEW IF EXISTS TEMPLATENAME_temp;
 
--- view for TEMPLATENAME
--- CREATE VIEW TEMPLATENAME AS 
-CREATE MATERIALIZED VIEW TEMPLATENAME AS
+-- temp view for TEMPLATENAME
+CREATE MATERIALIZED VIEW TEMPLATENAME_temp AS
     -- general attributes (all features should have them)
     SELECT osm_id as id,
         planet_osm_point.name,
@@ -45,11 +44,11 @@ CREATE MATERIALIZED VIEW TEMPLATENAME AS
 
 
 CREATE INDEX TEMPLATENAME_geom_idx
-  ON TEMPLATENAME
+  ON TEMPLATENAME_temp
   USING GIST (geom);
 
 CREATE INDEX TEMPLATENAME_importance_metric_idx
-  ON TEMPLATENAME(importance_metric);  -- automatcially uses b-tree
+  ON TEMPLATENAME_temp(importance_metric);  -- automatcially uses b-tree
 
 
 -- we want to prioritize POIs with the higher distances to other POIs where the importance_metric is higher than itself.
@@ -76,7 +75,7 @@ WITH cd AS (
             THEN cd.dist
             ELSE ST_Distance(a.geom, b.geom)
         END)) as min_dist
-    FROM cd CROSS JOIN TEMPLATENAME a LEFT JOIN TEMPLATENAME b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+    FROM cd CROSS JOIN TEMPLATENAME_temp a LEFT JOIN TEMPLATENAME_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
     GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
     ORDER BY importance_metric DESC, min_dist DESC
 )
@@ -150,7 +149,8 @@ BEGIN
             FROM distance_TEMPLATENAME
             WHERE zoom = 21 AND ST_TRANSFORM(distance_TEMPLATENAME.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
-
+        
+    END IF;
 
   RETURN mvt;
 END

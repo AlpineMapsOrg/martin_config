@@ -6,11 +6,11 @@ DROP INDEX distance_cottages_zoom_idx;
 DROP INDEX cottages_geom_idx;
 DROP INDEX cottages_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_cottages;
-DROP MATERIALIZED VIEW IF EXISTS cottages;
+DROP MATERIALIZED VIEW IF EXISTS cottages_temp;
 
 -- view for cottages
 -- CREATE VIEW cottages AS 
-CREATE MATERIALIZED VIEW cottages AS
+CREATE MATERIALIZED VIEW cottages_temp AS
     -- general attributes (all features should have them)
     SELECT osm_id as id,
         planet_osm_point.name,
@@ -26,10 +26,10 @@ CREATE MATERIALIZED VIEW cottages AS
             -- add additional values to the hstore 
             planet_osm_point.tags 
                 || hstore('addr:housenumber',  planet_osm_point."addr:housenumber"::text)
-                || hstore('operator',  planet_osm_point.operator::text)
+                -- || hstore('operator',  planet_osm_point.operator::text)
                 || hstore('type',  planet_osm_point.tourism::text)
-                || hstore('access',  planet_osm_point.access::text)
-                || hstore('ele', FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int::text),
+                -- || hstore('access',  planet_osm_point.access::text)
+                || hstore('ele', FLOOR(nullif(substring(planet_osm_point.tags->'ele' FROM '[0-9]+'), '')::decimal)::int::text),
             ARRAY[
                 'name:de',
                 'wikipedia',
@@ -68,11 +68,11 @@ CREATE MATERIALIZED VIEW cottages AS
 
 
 CREATE INDEX cottages_geom_idx
-  ON cottages
+  ON cottages_temp
   USING GIST (geom);
 
 CREATE INDEX cottages_importance_metric_idx
-  ON cottages(importance_metric);  -- automatcially uses b-tree
+  ON cottages_temp(importance_metric);  -- automatcially uses b-tree
 
 
 -- we want to prioritize POIs with the higher distances to other POIs where the importance_metric is higher than itself.
@@ -99,7 +99,7 @@ WITH cd AS (
             THEN cd.dist
             ELSE ST_Distance(a.geom, b.geom)
         END)) as min_dist
-    FROM cd CROSS JOIN cottages a LEFT JOIN cottages b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+    FROM cd CROSS JOIN cottages_temp a LEFT JOIN cottages_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
     GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
     ORDER BY importance_metric DESC, min_dist DESC
 )
