@@ -134,9 +134,10 @@ BEGIN
     ELSE
     -- all POIs visible
         SELECT INTO mvt ST_AsMVT(tile, 'TEMPLATENAME', 4096, 'geom', 'id') FROM (
+
             SELECT id, name, lat,long,importance,importance_metric,
             ST_AsMVTGeom(
-                ST_Transform(TEMPLATENAME.geom, 3857),
+                ST_Transform(distance_TEMPLATENAME.geom, 3857),
                 ST_TileEnvelope(z,x,y),
                 4096, 0, true
             ) as geom,
@@ -146,11 +147,9 @@ BEGIN
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata
 
-            FROM TEMPLATENAME
-            WHERE ST_TRANSFORM(TEMPLATENAME.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            FROM distance_TEMPLATENAME
+            WHERE zoom = 21 AND ST_TRANSFORM(distance_TEMPLATENAME.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
-
-    END IF;
 
 
   RETURN mvt;

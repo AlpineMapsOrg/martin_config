@@ -14,9 +14,9 @@ def deg2num(lat_deg, lon_deg, zoom):
 
 
 def main(zoom):
-      # loc = deg2num(47.07454640014584, 12.693882599999998, zoom) # Großglockner
+      loc = deg2num(47.07454640014584, 12.693882599999998, zoom) # Großglockner
       # loc = deg2num(48.08257492980377, 16.286316690168128, zoom) # Mödling (city south of Vienna)
-      loc = deg2num(46.88524290018454, 10.867279, zoom) # Wildspitze
+      # loc = deg2num(46.88524290018454, 10.867279, zoom) # Wildspitze
 
       # print(str(zoom) +"," + str(loc[0]) + "," + str(loc[1]))
       print("http://localhost:3000/peaks/" + str(zoom) +"/" + str(loc[0]) + "/" + str(loc[1]))

@@ -39,7 +39,7 @@
 --   ORDER BY importance_metric desc
 --   LIMIT 25;
 
-select * from distance_peaks WHERE name = 'Wildspitze';
+select * from distance_peaks WHERE name = 'Kleinglockner';
 -- select * from peaks WHERE name = 'Großglockner';
   
   -- SELECT osm_id as id,

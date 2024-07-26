@@ -127,7 +127,7 @@ BEGIN
             data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata,
-            data->'population' as population,
+            (data->'population')::int as population,
             data->'place' as place,
             data->'population:date' as population_date,
             data->'website' as website
@@ -139,9 +139,10 @@ BEGIN
     ELSE
     -- all POIs visible
         SELECT INTO mvt ST_AsMVT(tile, 'cities', 4096, 'geom', 'id') FROM (
+
             SELECT id, name, lat,long,importance,importance_metric,
             ST_AsMVTGeom(
-                ST_Transform(cities.geom, 3857),
+                ST_Transform(distance_cities.geom, 3857),
                 ST_TileEnvelope(z,x,y),
                 4096, 0, true
             ) as geom,
@@ -149,15 +150,15 @@ BEGIN
             data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata,
-            data->'population' as population,
+            (data->'population')::int as population,
             data->'place' as place,
             data->'population:date' as population_date,
             data->'website' as website
 
-            FROM cities
-            WHERE ST_TRANSFORM(cities.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            FROM distance_cities
+            WHERE zoom = 21 AND ST_TRANSFORM(distance_cities.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
-
+        
     END IF;
 
 

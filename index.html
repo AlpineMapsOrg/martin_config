@@ -42,7 +42,7 @@
     }).addTo(map);
 
       // fetch(`http://localhost:3000/cottages,cities,peaks`)
-      fetch(`http://localhost:3000/cottages`)
+      fetch(`http://localhost:3000/peaks`)
               .then(response => response.json())
               .then(json => L.vectorGrid
                 .protobuf(json.tiles[0], {

@@ -168,7 +168,7 @@ BEGIN
             data->'operator' as operator,
             data->'type' as type,
             data->'access' as access,
-            data->'ele' as ele
+            (data->'ele')::int as ele
 
             FROM distance_cottages
             WHERE zoom = z AND ST_TRANSFORM(distance_cottages.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
@@ -179,7 +179,7 @@ BEGIN
         SELECT INTO mvt ST_AsMVT(tile, 'cottages', 4096, 'geom', 'id') FROM (
             SELECT id, name, lat,long,importance,importance_metric,
             ST_AsMVTGeom(
-                ST_Transform(cottages.geom, 3857),
+                ST_Transform(distance_cottages.geom, 3857),
                 ST_TileEnvelope(z,x,y),
                 4096, 0, true
             ) as geom,
@@ -207,10 +207,10 @@ BEGIN
             data->'operator' as operator,
             data->'type' as type,
             data->'access' as access,
-            data->'ele' as ele
+            (data->'ele')::int as ele
 
-            FROM cottages
-            WHERE ST_TRANSFORM(cottages.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            FROM distance_cottages
+            WHERE zoom = 21 AND ST_TRANSFORM(distance_cottages.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
 
     END IF;

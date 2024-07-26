@@ -127,7 +127,7 @@ BEGIN
             data->'prominence' as prominence,
             data->'summit:cross' as summit_cross,
             data->'summit:register' as summit_register,
-            data->'ele' as ele
+            (data->'ele')::int as ele
 
             FROM distance_peaks
             WHERE zoom = z AND ST_TRANSFORM(distance_peaks.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
@@ -138,7 +138,7 @@ BEGIN
         SELECT INTO mvt ST_AsMVT(tile, 'Peak', 4096, 'geom', 'id') FROM (
             SELECT id, name, lat,long,importance,importance_metric,
             ST_AsMVTGeom(
-                ST_Transform(peaks.geom, 3857),
+                ST_Transform(distance_peaks.geom, 3857),
                 ST_TileEnvelope(z,x,y),
                 4096, 0, true
             ) as geom,
@@ -146,16 +146,15 @@ BEGIN
             data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata,
-            data->'importance' as importance,
+            data->'importance' as importance_osm,
             data->'prominence' as prominence,
             data->'summit:cross' as summit_cross,
             data->'summit:register' as summit_register,
-            data->'ele' as ele
+            (data->'ele')::int as ele
 
-            FROM peaks
-            WHERE ST_TRANSFORM(peaks.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            FROM distance_peaks
+            WHERE zoom = 21 AND ST_TRANSFORM(distance_peaks.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
-
     END IF;
 
 
