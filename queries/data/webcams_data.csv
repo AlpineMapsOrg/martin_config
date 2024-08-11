@@ -1,0 +1,111 @@
+important|           keys           | entries_with_values | distinct_value_amount |                                                                                  value                                                                                  
+x| surveillance             |431|7| {indoor,maxspeed,outdoor,public,traffic,webcam,NULL}
+x| camera:type              |253|5| {dome,fixed,panning,panorama,NULL}
+x| surveillance:type        |244|6| {camera,fixed,guard,outdoor,webcam,NULL}
+x| camera:direction         |226|80| {0,10}
+x| contact:webcam           |206|206| {http://cam1.rauris.net/view/view.shtml?id=5017&imagepath=/mjpg/video.mjpg,https://kuehtai.panomax.com/kaiserbahn-winter}
+x| description              |170|170|" {""1h gratis parken"",""Astental / Burgstalleralm - Blick nach Südwesten""}"
+x| contact:website          |163|164| {https://gulaschundsoehne.com/,https://www.foto-webcam.eu/webcam/ankogel-sued/}
+x| website                  |97|92| {http://easy10.it-wms.com/big_window.php?lang=de&pic=big_current1.jpg&title=Webcam%20Zinkenst%FCberl%20Bad%20D%FCrrnberg&width=1024&height=640,https://cafemyfelix.at/}
+x| surveillance:zone        |45|10| {area,atm,building,parking,public,station,street,town,traffic,NULL}
+x| image                    |14|15| {http://cam1.rauris.net/mjpg/video.mjpg,https://www.foto-webcam.eu/webcam/funtenseetauern/current/1200.jpg}
+| opening_hours            |106|86|" {11:00-00:30,""Mo-Fr 06:00-15:00""}"
+| addr:country             |97|3| {AT,DE,NULL}
+| addr:city                |92|12| {Baden,Leobersdorf}
+| wheelchair               |91|4| {limited,no,yes,NULL}
+| addr:street              |90|62|" {""Am Heumarkt"",Baumkirchnerring}"
+| addr:postcode            |90|24| {1010,1060}
+| camera:mount             |76|9| {building,ceiling,pole,rock,roof,wall,wall/ceiling,wand,NULL}
+| brand:wikidata           |73|46| {Q1066858,Q147662}
+| check_date               |70|24| {2020-12-31,2022-05-19}
+| brand:wikipedia          |61|42|" {de:Bank99,""de:Conrad Electronic""}"
+| phone                    |47|48|" {""+13-676 841 077 84"",""+43 1 3195009""}"
+| operator:wikidata        |29|7| {Q112118218,Q112181206,Q114778107,Q1763505,Q296108,Q668849,NULL}
+| parking                  |23|3| {surface,underground,NULL}
+| fee                      |22|3|" {yes,""yes + fee:conditional=no @ (stay < 1 hours)"",NULL}"
+| capacity                 |21|22| {1049,182}
+| atm                      |19|3| {no,yes,NULL}
+| check_date:opening_hours |18|12| {2023-08-04,2023-12-05}
+| height                   |18|6| {12,3,4,5,7,NULL}
+| outdoor_seating          |18|4| {no,pedestrian_zone,yes,NULL}
+| level                    |16|3| {0,1,NULL}
+| cuisine                  |15|11| {asian,coffee_shop}
+| indoor_seating           |15|2| {yes,NULL}
+||||
+||||
+||||
+||||
+||||
+|CAM WEBSITES|split_part(data->'contact:webcam', '/', 3)||
+| alpbach.panomax.com|||
+| axamer-lizum.panomax.com|||
+| berggasthof-rofan.com|||
+| burghausen.panomax.com|||
+| cam1.rauris.net|||
+| copadata.panomax.com|||
+| dyn2.verkehrsauskunft.at|||
+| ehrwald.panomax.com|||
+| ellmau.panomax.com|||
+| festungsbahn.panomax.com|||
+| flyingbulls.panomax.com|||
+| gaisberg.panomax.com|||
+| going.panomax.com|||
+| golfplatz-ehrwald.panomax.com|||
+| grossglockner.panomax.com|||
+| hintertux.panomax.com|||
+| hochfuegen.panomax.com|||
+| imst-nassereith.panomax.com|||
+| imst-tarrenz.panomax.com|||
+| innsbruck-airport.panomax.com|||
+| irrseewebcam.sein.at|||
+| kuehtai.panomax.com|||
+| laengenfeld.panomax.com|||
+| leutasch.panomax.com|||
+| livecam.salzburg-airport.com|||
+| live-image.panomax.com|||
+| mayrhofen.panomax.com|||
+| mdw.ag|||
+| moesern.panomax.com|||
+| nachtski.panomax.com|||
+| neumarkt.panomax.com|||
+| oberissalm.panomax.com|||
+| panocam.zillertalarena.com|||
+| pano.mayrhofner-bergbahnen.com|||
+| patscherkofel.panomax.com|||
+| post-lermoos.panomax.com|||
+| rossfeld.panomax.com|||
+| seefeld.panomax.com|||
+| silvretta.panomax.com|||
+| skiarlberg.at|||
+| soelden.panomax.com|||
+| soell.panomax.com|||
+| sqr.netzcam.net|||
+| tiroler-oberland.panomax.com|||
+| umhausen.panomax.com|||
+| unternehmen.ortswaerme.info|||
+| walchsee.panomax.com|||
+| webcam.edelweiss-gurgl.com|||
+| webcam.kaiserlift.at|||
+| webcam.nl|||
+| webcams2.asfinag.at|||
+| webcams-thalgau.at|||
+| webcams.tirol.gv.at|||
+| webtv.feratel.com|||
+| wiesenhof.panomax.com|||
+| winklmoos.panomax.com|||
+| www.arlberghaus.com|||
+| www.bergfex.at|||
+| www.donau-fritzi.at|||
+| www.entners.at|||
+| www.feuerwehr-felixdorf.at|||
+x| www.foto-webcam.eu|||
+| www.golfclub-nationalpark-hohetauern.at|||
+| www.innsbruck.info|||
+| www.landgasthof-adler.at|||
+| www.land-oberoesterreich.gv.at|||
+| www.livecam-hd.eu|||
+| www.terra-hd.de|||
+| www.vorarlberg-cam.at|||
+| www.wurzacher.eu|||
+| zugspitze.panomax.com|||
+| zugspitz-resort.panomax.com|||

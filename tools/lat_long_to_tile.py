@@ -21,6 +21,9 @@ def main(zoom):
       # print(str(zoom) +"," + str(loc[0]) + "," + str(loc[1]))
       print("http://localhost:3000/peaks/" + str(zoom) +"/" + str(loc[0]) + "/" + str(loc[1]))
 
+      # tile with peaks, cities and cottages (around Großglockner)
+      # localhost:3000/peaks,cities,cottages/10/548/359
+
 
 # usage: lat_long_to_tile.py <zoom>
 #     e.g. lat_long_to_tile.py 12

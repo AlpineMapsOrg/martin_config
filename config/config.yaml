@@ -2,6 +2,17 @@ postgres:
   connection_string: postgresql://postgres:alpinemaps@localhost/alpinemaps
 
   functions:
+    poi_v1:
+      schema: public
+      function: poi_v1
+      minzoom: 10
+      properties:
+        name: text
+        long: double
+        lat: double
+        importance: double
+        importance_metric: int
+
     peaks:
       schema: public
       function: peak_tile

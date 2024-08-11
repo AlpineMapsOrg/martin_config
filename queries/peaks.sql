@@ -1,6 +1,11 @@
+-- for TU WIEN change 
+-- planet_osm_point.ele 
+-- planet_osm_point.tags->'ele'
+
 
 
 -- drop everything we dont need
+DROP FUNCTION IF EXISTS metahelper_peaks;
 DROP FUNCTION IF EXISTS peak_tile;
 DROP INDEX distance_peaks_geom_idx;
 DROP INDEX distance_peaks_zoom_idx;
@@ -14,17 +19,17 @@ DROP MATERIALIZED VIEW IF EXISTS peaks_temp;
 CREATE MATERIALIZED VIEW peaks_temp AS
     -- general attributes (all features should have them)
     SELECT osm_id as id,
-        planet_osm_point.name,
+        COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name) as name, -- prefer german name
         ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
         ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
         planet_osm_point.way as geom,
 
         -- FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
-        FLOOR(nullif(substring(planet_osm_point.tags->'ele' FROM '[0-9]+'), '')::decimal)::int as importance_metric,
+        FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
 
         slice( -- only extracts attributes defined by array
             -- add ele to data field
-            planet_osm_point.tags || hstore('ele', FLOOR(nullif(substring(planet_osm_point.tags->'ele' FROM '[0-9]+'), '')::decimal)::int::text),
+            planet_osm_point.tags || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text),
             ARRAY[
                 'name:de',
                 'wikipedia',
@@ -38,7 +43,7 @@ CREATE MATERIALIZED VIEW peaks_temp AS
         ) as data
 
     FROM planet_osm_point
-      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND planet_osm_point.tags->'ele' IS NOT NULL
+      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND planet_osm_point.ele IS NOT NULL
       ORDER BY importance_metric desc;
 
 
@@ -162,3 +167,46 @@ BEGIN
   RETURN mvt;
 END
 $$ LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE;
+
+
+
+
+------------------------
+-- Helper function to understand the data encapsulated by the underlying table better
+------------------------
+
+CREATE OR REPLACE
+    FUNCTION metahelper_peaks(min_amount_with_key integer, max_values_per_key integer) 
+  returns table(keys text, entries_with_values integer, distinct_value_amount integer, value text[]) 
+as $$
+
+  WITH source as (
+    SELECT planet_osm_point.tags as tags
+    FROM planet_osm_point
+    WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND planet_osm_point.ele IS NOT NULL
+  )
+  SELECT keys,
+    entries_with_values,
+    array_length(vals, 1) as distinct_value_amount, -- how many distinct values are there
+    (CASE 
+        WHEN array_length(vals, 1) > max_values_per_key
+        THEN array[vals[1], vals[max_values_per_key/2]]::text[] -- too many different values -> return two example value
+        ELSE vals
+    END) as value
+  FROM (
+    SELECT keys, entries_with_values, array_agg(DISTINCT source.tags->keys) as vals
+    FROM source, (
+      SELECT skeys(tags) as keys,
+       count(*) as entries_with_values -- how many POIs have the key
+      FROM source
+      GROUP BY keys
+    ) as distinct_keys
+    WHERE entries_with_values > min_amount_with_key -- only propagate if at least 10 POIs has the key
+    GROUP BY distinct_keys.keys, distinct_keys.entries_with_values
+  ) as keys_with_values
+
+$$ language sql;
+
+
+-- SELECT * from metahelper_peaks(10,10)
+-- ORDER BY entries_with_values DESC;
