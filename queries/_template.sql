@@ -84,7 +84,7 @@ SELECT
     importance_metric,
     cluster_dists.zoom,
     -- importance: in interval [0,1] 1 means that it has the max importances (= max distance to POIs with higher metric than itself)
-    LEAST(min_dist::decimal / cd.dist::decimal, 1.0) as importance
+    LEAST(min_dist::real / cd.dist::real, 1.0)::real as importance
 FROM cd, all_distances LEFT JOIN cluster_dists ON (cluster_dists.zoom >= 8 and cluster_dists.zoom < 22)
 ORDER BY importance DESC, importance_metric DESC
 ;
