@@ -6,7 +6,6 @@
 DROP FUNCTION IF EXISTS metahelper_webcams;
 DROP FUNCTION IF EXISTS webcams_tile;
 DROP INDEX distance_webcams_geom_idx;
-DROP INDEX distance_webcams_zoom_idx;
 DROP INDEX webcams_geom_idx;
 DROP INDEX webcams_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_webcams;
@@ -52,7 +51,7 @@ CREATE MATERIALIZED VIEW webcams_temp AS
     --   planet_osm_point.tags->'surveillance:zone' IN ('area', 'public')
     --   or not planet_osm_point.tags ? 'surveillance:zone' -- case that zone is not defined
     -- )
-    ORDER BY importance_metric desc;
+    ORDER BY importance_metric desc
 ;
 
 
@@ -66,39 +65,30 @@ CREATE INDEX webcams_importance_metric_idx
 
 -- we want to prioritize POIs with the higher distances to other POIs where the importance_metric is higher than itself.
 -- e.g. Kleinglockner is near Großglockner (small distance -> will only be shown very late although it has a high altitude)
--- the following materialized view calculates those distances to each POI within a certain radius (search radius defined in cluster_dist as 1/3 of tile width and currently starting to search with zoom level 8)
--- all_distances calculates the min_dist to better POI
--- whereas the final select creates a list for each individual zoom level and orders those results by importance_metric
+-- the following materialized view calculates those distances to each POI within a certain radius (search radius defined in cluster_dist as 1/3 of tile width and zoom level 8)
+-- the select calculates the min_dist to better POI (saved as importance which is the normalized distance [0,1] interval)
 CREATE MATERIALIZED VIEW distance_webcams AS
 WITH cd AS (
     SELECT * from cluster_dists
-    WHERE zoom = 8 -- min cluster zoom level is defined here
-), all_distances as (
-    SELECT a.id,
-        a.name,
-        a.data,
-        a.importance_metric as importance_metric,
-        a.geom,
-        a.long,
-        a.lat,
-        -- this sets the distance to max for itself
-        -- this way it will always be here if no taller webcams has been found in radius
-        min((CASE 
-            WHEN a.id = b.id
-            THEN cd.dist
-            ELSE ST_Distance(a.geom, b.geom)
-        END)) as min_dist
-    FROM cd CROSS JOIN webcams_temp a LEFT JOIN webcams_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
-    GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
-    ORDER BY importance_metric DESC, min_dist DESC
+    WHERE zoom = 8 -- cluster zoom level is defined here
 )
-SELECT
-    id, name, data, geom, long, lat,
-    importance_metric,
-    cluster_dists.zoom,
-    -- importance: in interval [0,1] 1 means that it has the max importances (= max distance to POIs with higher metric than itself)
-    LEAST(min_dist::real / cd.dist::real, 1.0)::real as importance
-FROM cd, all_distances LEFT JOIN cluster_dists ON (cluster_dists.zoom >= 8 and cluster_dists.zoom < 22)
+SELECT a.id,
+    a.name,
+    a.data,
+    a.importance_metric as importance_metric,
+    a.geom,
+    a.long,
+    a.lat,
+    -- this sets the distance to max for itself
+    -- this way it will always be here if no better webcams have been found in the radius
+    min(
+    (CASE 
+        WHEN a.id = b.id
+        THEN 1.0
+        ELSE LEAST(ST_Distance(a.geom, b.geom)::real / cd.dist::real, 1.0)::real
+    END)) as importance -- =normalized min_dist
+FROM cd CROSS JOIN webcams_temp a LEFT JOIN webcams_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
 ORDER BY importance DESC, importance_metric DESC
 ;
 
@@ -109,10 +99,6 @@ CREATE INDEX distance_webcams_geom_idx
   ON distance_webcams
   USING GIST (geom);
 
-
-CREATE INDEX distance_webcams_zoom_idx
-  ON distance_webcams
-  USING HASH (zoom);
 
 
 
@@ -143,7 +129,7 @@ BEGIN
             (data->'ele')::int as ele
 
             FROM distance_webcams
-            WHERE zoom = z AND ST_TRANSFORM(distance_webcams.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            WHERE ST_TRANSFORM(distance_webcams.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
             LIMIT 4
         ) as tile;
     ELSE
@@ -166,7 +152,7 @@ BEGIN
             (data->'ele')::int as ele
 
             FROM distance_webcams
-            WHERE zoom = 21 AND ST_TRANSFORM(distance_webcams.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
+            WHERE ST_TRANSFORM(distance_webcams.geom,4674) && ST_Transform(ST_TileEnvelope(z,x,y), 4674)
         ) as tile;
         
     END IF;
