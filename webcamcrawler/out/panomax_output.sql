@@ -1,13 +1,4 @@
 
-	CREATE TABLE IF NOT EXISTS "external_webcams" (
-
-  "id"  SERIAL PRIMARY KEY,
-  "name" text,
-  "lat" real,
-  "long" real,
-  "url" text
-);
-
 INSERT INTO "external_webcams" ("name","lat","long","url")
 VALUES
 ('Kaiser Franz Josefs Höhe', 47.075826, 12.750602, 'https://grossglockner.panomax.com'),

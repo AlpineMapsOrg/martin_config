@@ -28,9 +28,9 @@ CREATE MATERIALIZED VIEW peaks_temp AS
 
         slice( -- only extracts attributes defined by array
             -- add ele to data field
-            planet_osm_point.tags || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text),
+            planet_osm_point.tags 
+              || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text),
             ARRAY[
-                'name:de',
                 'wikipedia',
                 'wikidata',
                 'importance',
@@ -110,7 +110,6 @@ BEGIN
                 4096, 0, true
             ) as geom,
 
-            data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata,
             data->'importance' as importance_osm,
@@ -133,7 +132,6 @@ BEGIN
                 4096, 0, true
             ) as geom,
 
-            data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata,
             data->'importance' as importance_osm,

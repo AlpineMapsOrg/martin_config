@@ -20,15 +20,6 @@ def chunks(list, n):
 
 def write_as_sql_insert(filename, inserts):
 	output = '''
-	CREATE TABLE IF NOT EXISTS "external_webcams" (
-
-  "id"  SERIAL PRIMARY KEY,
-  "name" text,
-  "lat" real,
-  "long" real,
-  "url" text
-);
-
 INSERT INTO "external_webcams" ("name","lat","long","url")
 VALUES
 '''

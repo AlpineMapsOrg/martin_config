@@ -19,7 +19,7 @@ def main(zoom):
       # loc = deg2num(46.88524290018454, 10.867279, zoom) # Wildspitze
 
       # print(str(zoom) +"," + str(loc[0]) + "," + str(loc[1]))
-      print("http://localhost:3000/peaks/" + str(zoom) +"/" + str(loc[0]) + "/" + str(loc[1]))
+      print("http://localhost:3000/poi_v1/" + str(zoom) +"/" + str(loc[0]) + "/" + str(loc[1]))
 
       # tile with peaks, cities and cottages (around Großglockner)
       # localhost:3000/peaks,cities,cottages/10/548/359

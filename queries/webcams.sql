@@ -11,46 +11,62 @@ DROP INDEX webcams_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_webcams;
 DROP MATERIALIZED VIEW IF EXISTS webcams_temp;
 
-
 -- temp view for webcams
 CREATE MATERIALIZED VIEW webcams_temp AS
-    -- general attributes (all features should have them)
-    SELECT osm_id as id,
-        COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name, split_part(planet_osm_point.tags->'contact:webcam', '/', 5)) as name, -- prefer german name, if no name use a part of the webcam url (NOTE: !!! only works for foto-webcam.eu)
-        ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
-        ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
-        planet_osm_point.way as geom,
+    -- combines osm data with external webcam data table
+    -- note external table has same fields and ids are far bigger than current osm id max
+    SELECT * FROM (
+    (
+        -- general attributes (all features should have them)
+        SELECT osm_id as id,
+            COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name, split_part(planet_osm_point.tags->'contact:webcam', '/', 5)) as name, -- prefer german name, if no name use a part of the webcam url (NOTE: !!! only works for foto-webcam.eu)
+            ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
+            ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
+            planet_osm_point.way as geom,
 
-        COALESCE(FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int,0) as importance_metric,
+            COALESCE(FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int,0) as importance_metric,
+            
+            slice( -- only extracts attributes defined by array
+                planet_osm_point.tags 
+                  || hstore('contact:webcam',  COALESCE(planet_osm_point.tags->'contact:webcam', planet_osm_point.tags->'image', planet_osm_point.tags->'contact:website')::text)
+                  || hstore('ele', COALESCE(FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int,0)::text),
+                ARRAY[
+                   'camera:type',
+                   'camera:direction',
+                   'surveillance:type',
+                   'surveillance:zone',
+                   'contact:webcam', -- the actual image
+                   'description',
+                   'ele'
+                ]
+            ) as data
+
+        FROM planet_osm_point
+        WHERE planet_osm_point."man_made" = 'surveillance'::text
+        -- NOTE: we are currently only using foto-webcam.eu 
+        -- if you ever want to add other webcams you can use the following sql command to see what other webcam services are available
+        -- split_part(data->'contact:webcam', '/', 3)
+        AND planet_osm_point.tags->'contact:webcam' LIKE '%foto-webcam.eu%'
+
+        -- useful queries if you ever decide to expand the webcam sites
+        -- AND planet_osm_point.tags->'surveillance' in ('public', 'webcam', 'outdoor')
+        -- AND (
+        --   planet_osm_point.tags->'surveillance:zone' IN ('area', 'public')
+        --   or not planet_osm_point.tags ? 'surveillance:zone' -- case that zone is not defined
+        -- )
         
-        slice( -- only extracts attributes defined by array
-            planet_osm_point.tags 
-              || hstore('contact:webcam',  COALESCE(planet_osm_point.tags->'contact:webcam', planet_osm_point.tags->'image', planet_osm_point.tags->'contact:website')::text)
-              || hstore('ele', COALESCE(FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int,0)::text),
-            ARRAY[
-               'camera:type',
-               'camera:direction',
-               'surveillance:type',
-               'surveillance:zone',
-               'contact:webcam', -- the actual image
-               'description',
-               'ele'
-            ]
-        ) as data
+    )
+    UNION
+    (
+        SELECT id, name,long,lat,
+        ST_SetSRID(ST_MakePoint(long, lat),3857) as geom,
 
-    FROM planet_osm_point
-    WHERE planet_osm_point."man_made" = 'surveillance'::text
-    -- NOTE: we are currently only using foto-webcam.eu 
-    -- if you ever want to add other webcams you can use the following sql command to see what other webcam services are available
-    -- split_part(data->'contact:webcam', '/', 3)
-    AND planet_osm_point.tags->'contact:webcam' LIKE '%foto-webcam.eu%'
+        1500 as importance_metric, -- we have no valid way to calculate the metric here
 
-    -- useful queries if you ever decide to expand the webcam sites
-    -- AND planet_osm_point.tags->'surveillance' in ('public', 'webcam', 'outdoor')
-    -- AND (
-    --   planet_osm_point.tags->'surveillance:zone' IN ('area', 'public')
-    --   or not planet_osm_point.tags ? 'surveillance:zone' -- case that zone is not defined
-    -- )
+        hstore('contact:webcam', url) as data
+        
+        FROM external_webcams
+    )) a
     ORDER BY importance_metric desc
 ;
 

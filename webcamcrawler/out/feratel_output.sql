@@ -1,13 +1,4 @@
 
-	CREATE TABLE IF NOT EXISTS "external_webcams" (
-
-  "id"  SERIAL PRIMARY KEY,
-  "name" text,
-  "lat" real,
-  "long" real,
-  "url" text
-);
-
 INSERT INTO "external_webcams" ("name","lat","long","url")
 VALUES
 ('Eisenstadt', 47.85, 16.516667, 'https://www.feratel.com/webcams/oesterreich/oakriengineburgenland/eisenstadt.html'),

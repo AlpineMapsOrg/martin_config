@@ -107,7 +107,6 @@ BEGIN
             ) as geom,
 
             -- TODO extract the custom data fields here (and add them in config.yaml)
-            data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata
 
@@ -127,7 +126,6 @@ BEGIN
             ) as geom,
 
             -- TODO extract the custom data fields here (and add them in config.yaml)
-            data->'name:de' as de_name,
             data->'wikipedia' as wikipedia,
             data->'wikidata' as wikidata
 
