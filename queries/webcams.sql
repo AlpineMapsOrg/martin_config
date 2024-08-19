@@ -19,7 +19,7 @@ CREATE MATERIALIZED VIEW webcams_temp AS
     (
         -- general attributes (all features should have them)
         SELECT osm_id as id,
-            COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name, split_part(planet_osm_point.tags->'contact:webcam', '/', 5)) as name, -- prefer german name, if no name use a part of the webcam url (NOTE: !!! only works for foto-webcam.eu)
+            COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name, '') as name,
             ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
             ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
             planet_osm_point.way as geom,
@@ -43,10 +43,27 @@ CREATE MATERIALIZED VIEW webcams_temp AS
 
         FROM planet_osm_point
         WHERE planet_osm_point."man_made" = 'surveillance'::text
-        -- NOTE: we are currently only using foto-webcam.eu 
+        -- NOTE: we are currently only using webcams from the following websites
+        -- other webcams were either not available, traffic cameras, duplicates from the external source, or not fitting for the application
         -- if you ever want to add other webcams you can use the following sql command to see what other webcam services are available
         -- split_part(data->'contact:webcam', '/', 3)
-        AND planet_osm_point.tags->'contact:webcam' LIKE '%foto-webcam.eu%'
+        AND planet_osm_point.tags->'contact:webcam' LIKE ANY (ARRAY[
+            '%foto-webcam.eu%',
+            '%terra-hd.de%',
+            '%livecam-hd.eu%',
+            '%landgasthof-adler.at%',
+            '%entners.at%',
+            '%bergoase.at%',
+            '%arlberghaus.com%',
+            '%webcam.nl%',
+            '%linz.it-wms.com%',
+            '%irrseewebcam.sein.at%',
+            '%wurzacher.eu%',
+            '%vorarlberg-cam.at%',
+            '%webcams-thalgau.at%',
+            '%unternehmen.ortswaerme.info%',
+            '%poestlingberg.it-wms.com%'
+        ])
 
         -- useful queries if you ever decide to expand the webcam sites
         -- AND planet_osm_point.tags->'surveillance' in ('public', 'webcam', 'outdoor')
@@ -192,7 +209,23 @@ as $$
     SELECT planet_osm_point.tags as tags
     FROM planet_osm_point
     WHERE planet_osm_point."man_made" = 'surveillance'::text
-    AND planet_osm_point.tags->'contact:webcam' LIKE '%foto-webcam.eu%'
+        AND planet_osm_point.tags->'contact:webcam' LIKE ANY (ARRAY[
+            '%foto-webcam.eu%',
+            '%terra-hd.de%',
+            '%livecam-hd.eu%',
+            '%landgasthof-adler.at%',
+            '%entners.at%',
+            '%bergoase.at%',
+            '%arlberghaus.com%',
+            '%webcam.nl%',
+            '%linz.it-wms.com%',
+            '%irrseewebcam.sein.at%',
+            '%wurzacher.eu%',
+            '%vorarlberg-cam.at%',
+            '%webcams-thalgau.at%',
+            '%unternehmen.ortswaerme.info%',
+            '%poestlingberg.it-wms.com%'
+        ])
   )
   SELECT keys,
     entries_with_values,
