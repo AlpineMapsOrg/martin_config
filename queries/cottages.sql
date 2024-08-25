@@ -32,9 +32,9 @@ CREATE MATERIALIZED VIEW cottages_temp AS
                 || hstore('type',  planet_osm_point.tourism::text)
                 || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text)
                 -- combine similar data fields
-                || hstore('email', COALESCE(planet_osm_point.tags->'contact:email', 'email')::text)
-                || hstore('website', COALESCE(planet_osm_point.tags->'contact:website', 'website')::text)
-                || hstore('phone', COALESCE(planet_osm_point.tags->'contact:phone', 'phone')::text),
+                || hstore('email', COALESCE(planet_osm_point.tags->'contact:email', planet_osm_point.tags->'email')::text)
+                || hstore('website', COALESCE(planet_osm_point.tags->'contact:website', planet_osm_point.tags->'website')::text)
+                || hstore('phone', COALESCE(planet_osm_point.tags->'contact:phone', planet_osm_point.tags->'phone')::text),
             ARRAY[
                 'wikipedia',
                 'wikidata',
