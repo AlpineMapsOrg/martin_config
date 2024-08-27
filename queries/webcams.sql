@@ -76,7 +76,7 @@ CREATE MATERIALIZED VIEW webcams_temp AS
     UNION
     (
         SELECT id, name,long,lat,
-        ST_SetSRID(ST_MakePoint(long, lat),3857) as geom,
+        ST_Transform(ST_SetSRID(ST_MakePoint(long, lat),4326), 3857) as geom,
 
         1500 as importance_metric, -- we have no valid way to calculate the metric here
 
