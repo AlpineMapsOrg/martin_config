@@ -17,8 +17,22 @@ Note: the data is encased in html tags and contains illegal line breaks:
 - after this test if your document is a valid json file (e.g. using an online validator)
 
 
+## IT-WMS
+all available webcams from IT-WMS are available under the link below in a json format
+https://www.it-wms.com/wp-content/themes/wmsweb/assets/locations/mdata.json
+
+
 # Convert to SQL
+
+1. activate virutal environment
+
+```source venv/bin/activate```
+
+2. download the json file (see above)
+
+3. call convert.py
+
+```python3 convert.py type file.json```
 
 by calling the convert.py script we can convert the json files into appropriate postgresql insert into queries. Note for panomax we still have to call the panomax website since some information (webcam urls) are still locked behind additional website requests. Those additional website calls are also already programmed into the convert.py file.
 
-```usage: convert.py type file.json```
