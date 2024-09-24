@@ -14,56 +14,120 @@ DROP MATERIALIZED VIEW IF EXISTS cottages_temp;
 -- view for cottages
 -- CREATE VIEW cottages AS 
 CREATE MATERIALIZED VIEW cottages_temp AS
-    -- general attributes (all features should have them)
-    SELECT osm_id as id,
-        COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name) as name, -- prefer german name
-        ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
-        ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
-        planet_osm_point.way as geom,
+    -- combines osm point data with osm polygon data
 
-        -- the number of tags is used as a metric for the clustering algorithm
-        -- -> more tags more important 
-        COALESCE(array_length(avals(planet_osm_point.tags), 1),0) AS importance_metric,
+    SELECT * FROM (
+    (
 
-        slice( -- only extracts attributes defined by array
-            -- add additional values to the hstore 
-            planet_osm_point.tags 
-                || hstore('addr:housenumber',  planet_osm_point."addr:housenumber"::text)
-                || hstore('type',  planet_osm_point.tourism::text)
-                || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text)
-                -- combine similar data fields
-                || hstore('email', COALESCE(planet_osm_point.tags->'contact:email', planet_osm_point.tags->'email')::text)
-                || hstore('website', COALESCE(planet_osm_point.tags->'contact:website', planet_osm_point.tags->'website')::text)
-                || hstore('phone', COALESCE(planet_osm_point.tags->'contact:phone', planet_osm_point.tags->'phone')::text),
-            ARRAY[
-                'wikipedia',
-                'wikidata',
-                'description',
-                'capacity',
-                'opening_hours',
-                'shower',
-                'phone',
-                'email',
-                'website',
-                'internet_access',
-                'addr:city',
-                'addr:street',
-                'addr:postcode',
+        -- general attributes (all features should have them)
+        SELECT osm_id as id,
+            COALESCE(planet_osm_point.tags->'name:de', planet_osm_point.name) as name, -- prefer german name
+            ST_X(ST_TRANSFORM(planet_osm_point.way,4674)) AS long,
+            ST_Y(ST_TRANSFORM(planet_osm_point.way,4674)) AS lat,
+            planet_osm_point.way as geom,
 
-                'addr:housenumber',
-                'operator',
-                'type',
-                'access',
-                'ele'
-            ]
-        ) as data
+            -- the number of tags is used as a metric for the clustering algorithm
+            -- -> more tags more important 
+            COALESCE(array_length(avals(planet_osm_point.tags), 1),0) AS importance_metric,
 
-    FROM planet_osm_point
-    WHERE (
-        planet_osm_point."tourism" = 'alpine_hut'::text or 
-        planet_osm_point."tourism" = 'wilderness_hut'::text 
-        -- planet_osm_point."tourism" = 'chalet'::text
-    ) AND name IS NOT NULL
+            slice( -- only extracts attributes defined by array
+                -- add additional values to the hstore 
+                planet_osm_point.tags 
+                    || hstore('addr:housenumber',  planet_osm_point."addr:housenumber"::text)
+                    || hstore('type',  planet_osm_point.tourism::text)
+                    || hstore('ele', FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int::text)
+                    -- combine similar data fields
+                    || hstore('email', COALESCE(planet_osm_point.tags->'contact:email', planet_osm_point.tags->'email')::text)
+                    || hstore('website', COALESCE(planet_osm_point.tags->'contact:website', planet_osm_point.tags->'website')::text)
+                    || hstore('phone', COALESCE(planet_osm_point.tags->'contact:phone', planet_osm_point.tags->'phone')::text),
+                ARRAY[
+                    'wikipedia',
+                    'wikidata',
+                    'description',
+                    'capacity',
+                    'opening_hours',
+                    'shower',
+                    'phone',
+                    'email',
+                    'website',
+                    'internet_access',
+                    'addr:city',
+                    'addr:street',
+                    'addr:postcode',
+
+                    'addr:housenumber',
+                    'operator',
+                    'type',
+                    'access',
+                    'ele'
+                ]
+            ) as data
+
+        FROM planet_osm_point
+        WHERE (
+            planet_osm_point."tourism" = 'alpine_hut'::text or 
+            planet_osm_point."tourism" = 'wilderness_hut'::text 
+            -- planet_osm_point."tourism" = 'chalet'::text
+        ) AND name IS NOT NULL
+
+    )
+    UNION
+    (
+
+        SELECT osm_id as id,
+            COALESCE(planet_osm_polygon.tags->'name:de', planet_osm_polygon.name) as name, -- prefer german name
+            -- since this is a polygon we calculate the centroid for the pin position
+            ST_X(ST_TRANSFORM(ST_Centroid(planet_osm_polygon.way),4674)) AS long,
+            ST_Y(ST_TRANSFORM(ST_Centroid(planet_osm_polygon.way),4674)) AS lat,
+            ST_Centroid(planet_osm_polygon.way) as geom,
+
+            -- the number of tags is used as a metric for the clustering algorithm
+            -- -> more tags more important 
+            COALESCE(array_length(avals(planet_osm_polygon.tags), 1),0) AS importance_metric,
+
+            slice( -- only extracts attributes defined by array
+                -- add additional values to the hstore 
+                planet_osm_polygon.tags 
+                    || hstore('addr:housenumber',  planet_osm_polygon."addr:housenumber"::text)
+                    || hstore('type',  planet_osm_polygon.tourism::text)
+                    -- ele in polygons stored in tags
+                    || hstore('ele', FLOOR(nullif(substring(planet_osm_polygon.tags->'ele' FROM '[0-9]+'), '')::decimal)::int::text)
+                    -- combine similar data fields
+                    || hstore('email', COALESCE(planet_osm_polygon.tags->'contact:email', planet_osm_polygon.tags->'email')::text)
+                    || hstore('website', COALESCE(planet_osm_polygon.tags->'contact:website', planet_osm_polygon.tags->'website')::text)
+                    || hstore('phone', COALESCE(planet_osm_polygon.tags->'contact:phone', planet_osm_polygon.tags->'phone')::text),
+                ARRAY[
+                    'wikipedia',
+                    'wikidata',
+                    'description',
+                    'capacity',
+                    'opening_hours',
+                    'shower',
+                    'phone',
+                    'email',
+                    'website',
+                    'internet_access',
+                    'addr:city',
+                    'addr:street',
+                    'addr:postcode',
+
+                    'addr:housenumber',
+                    'operator',
+                    'type',
+                    'access',
+                    'ele'
+                ]
+            ) as data
+
+        FROM planet_osm_polygon
+        WHERE (
+            planet_osm_polygon."tourism" = 'alpine_hut'::text or 
+            planet_osm_polygon."tourism" = 'wilderness_hut'::text 
+            -- planet_osm_polygon."tourism" = 'chalet'::text
+        ) AND name IS NOT NULL
+        AND osm_id > 0 -- sometimes there are negative ids -> filter them out... (those ids are used for external data? https://github.com/osm2pgsql-dev/osm2pgsql/issues/1097)
+    )) a
+
     ORDER BY importance_metric desc;
 
 
