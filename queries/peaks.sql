@@ -42,7 +42,7 @@ CREATE MATERIALIZED VIEW peaks_temp AS
         ) as data
 
     FROM planet_osm_point
-      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL AND planet_osm_point.ele IS NOT NULL
+      WHERE planet_osm_point."natural" = 'peak'::text AND name IS NOT NULL
       ORDER BY importance_metric desc;
 
 
