@@ -1,69 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<base target="_top">
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<title>map</title>
-	
-	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Tile POI Debugger</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
 
-	<style>
-		html, body {
-			height: 100%;
-			margin: 0;
-		}
-		.leaflet-container {
-			max-width: 100%;
-			max-height: 100%;
-		}
-	</style>
-
-	
+    <style>
+        /* Basic page styling */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        /* Set the map container to fill the page */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        /* Style for the popup table */
+        .popup-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .popup-table th, .popup-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .popup-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
+    <!-- The div where the map will be rendered -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <!-- Leaflet.VectorGrid plugin for Protobuf tiles -->
+    <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
+
+    <script>
+        // --- FIX for Leaflet.VectorGrid Bug ---
+        // The Leaflet.VectorGrid plugin has a known bug that causes an error on click
+        // because it doesn't correctly handle how Leaflet gets the latitude/longitude
+        // of a vector feature. The following code "monkey-patches" the library to
+        // prevent this error, as suggested by community-provided fixes.
+
+        // Store the original internal method
+        const originalCreateLayer = L.VectorGrid.prototype._createLayer;
+
+        // Create a new version of the method
+        L.VectorGrid.prototype._createLayer = function(feat, pxPerExtent, layerStyle) {
+            // Call the original method to create the layer as usual
+            const layer = originalCreateLayer.call(this, feat, pxPerExtent, layerStyle);
+
+            // Apply the fix: tell Leaflet not to try and get a lat/lng from this
+            // canvas-based feature. This prevents the "Cannot read property 'lat' of undefined" error.
+            if (layer) {
+                layer.getLatLng = null;
+            }
+            return layer;
+        };
+        // --- End of Fix ---
 
 
-<div id="map" style="position: absolute; top: 0; left:0; right: 0; bottom: 0;"></div>
-<script>
+        // --- 1. Initialize the Map ---
+        // Set the map's initial center and zoom level
+        const map = L.map('map').setView([47.07446, 12.69393], 11); // Centered on Grossglockner
 
+        // --- 2. Add the Background Tile Layer ---
+        // Using OpenStreetMap as the base map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
 
-      var map = L.map('map').setView([47.291, 12.877], 7);
+        // --- 3. Add the Vector Tile Layer for POIs ---
 
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+        // Define the URL for your local vector tile server
+        const poiTileUrl = "http://localhost:3000/poi_v1/{z}/{x}/{y}";
 
-      // fetch(`http://localhost:3000/cottages,cities,peaks`)
-      fetch(`http://localhost:3000/peaks`)
-              .then(response => response.json())
-              .then(json => L.vectorGrid
-                .protobuf(json.tiles[0], {
+        // Define styling for the POIs.
+        const vectorTileOptions = {
+            getFeatureId: function(f) {
+                return f.properties.id; // Ensure your features have a unique 'id' property if possible
+            },
+            vectorTileLayerStyles: {
+                // Style for point features in a layer named 'poi'.
+                // If your layer has a different name, change 'poi' to match it.
+                poi: {
+                    weight: 0,
+                    fillColor: '#e60000',
+                    fillOpacity: 0.7,
+                    radius: 5,
+                    fill: true,
+                }
+            },
+            interactive: true // Make the layer interactive to handle clicks
+        };
 
-    vectorTileLayerStyles: {
-      peaks: {
-        weight: 2,
-        radius: 2,
-          color: 'red',
-          fillColor: 'red',
-          fill: true
-      }
-    }
-  })
+        const poiLayer = L.vectorGrid.protobuf(poiTileUrl, vectorTileOptions);
 
-                .addTo(map))
+        // --- 4. Handle Click Events to Show Properties ---
+        // With the patch in place, we can now safely use the 'click' event.
+        poiLayer.on('click', function(e) {
+            L.DomEvent.stop(e); // Stop the event from propagating to the map
 
+            const properties = e.layer.properties;
+            let popupContent = '<h3>POI Properties</h3>';
 
+            if (properties && Object.keys(properties).length > 0) {
+                popupContent += '<table class="popup-table">';
+                popupContent += '<tr><th>Key</th><th>Value</th></tr>';
+                for (const key in properties) {
+                    popupContent += `<tr><td>${key}</td><td>${properties[key]}</td></tr>`;
+                }
+                popupContent += '</table>';
+            } else {
+                popupContent += '<p>No properties found for this feature.</p>';
+            }
 
-</script>
+            // Create and open a popup at the location of the click
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(popupContent)
+                .openOn(map);
+        });
+
+        // Add the configured POI layer to the map
+        poiLayer.addTo(map);
+
+    </script>
 
 </body>
 </html>
-

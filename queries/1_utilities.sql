@@ -1,5 +1,10 @@
 
 -- cluster_dists table is used to uniformly define the minimum dists between two POIs when looking at one zoom level
+
+DROP MATERIALIZED VIEW IF EXISTS distance_cities;
+DROP MATERIALIZED VIEW IF EXISTS distance_cottages;
+DROP MATERIALIZED VIEW IF EXISTS distance_peaks;
+DROP MATERIALIZED VIEW IF EXISTS distance_webcams;
 DROP TABLE IF EXISTS cluster_dists;
 
 CREATE TABLE cluster_dists AS
