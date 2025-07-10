@@ -82,10 +82,11 @@ SELECT a.id,
     min(
     (CASE 
         WHEN a.id = b.id
-        THEN 1.0
+        THEN 0.0
         ELSE LEAST(ST_Distance(a.geom, b.geom)::real / cd.dist::real, 1.0)::real
     END)) as importance -- =normalized min_dist
-FROM cd CROSS JOIN cities_temp a LEFT JOIN cities_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
+FROM cd CROSS JOIN cities_temp a LEFT JOIN cities_temp b
+  ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
 GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
 ORDER BY importance DESC, importance_metric DESC
 ;
