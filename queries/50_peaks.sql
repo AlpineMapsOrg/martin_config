@@ -13,7 +13,7 @@ CREATE MATERIALIZED VIEW peaks_temp AS
         planet_osm_point.way as geom,
 
         -- FLOOR(nullif(substring(ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
-        FLOOR(nullif(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal)::int as importance_metric,
+        COALESCE(NULLIF(substring(planet_osm_point.ele FROM '[0-9]+'), '')::decimal, 0)::int as importance_metric,
 
         slice( -- only extracts attributes defined by array
             -- add ele to data field
@@ -61,12 +61,15 @@ SELECT a.id,
     a.lat,
     -- this sets the distance to max for itself
     -- this way it will always be here if no taller peaks has been found in radius
-    min(
-    (CASE 
-        WHEN a.id = b.id
-        THEN 0.0 -- happens when the peak has no ele
-        ELSE LEAST(ST_Distance(a.geom, b.geom)::real / cd.dist::real, 1.0)::real
-    END)) as importance -- =normalized min_dist
+    CASE
+      WHEN a.importance_metric = 0 THEN 0.0
+      ELSE min(
+          CASE
+              WHEN a.id = b.id THEN 1.0
+              ELSE LEAST(ST_Distance(a.geom, b.geom)::real / cd.dist::real, 1.0)::real
+          END -- =normalized min_dist
+      )
+    END as importance
 FROM cd CROSS JOIN peaks_temp a LEFT JOIN peaks_temp b ON (ST_DWithin(a.geom, b.geom, cd.dist) and b.importance_metric >= a.importance_metric)
 GROUP BY a.id, a.name, a.data, a.geom, a.long, a.lat, a.importance_metric
 ORDER BY importance DESC, importance_metric DESC

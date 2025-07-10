@@ -72,7 +72,7 @@ SELECT a.id,
     min(
     (CASE 
         WHEN a.id = b.id
-        THEN 0.0
+        THEN 1.0
         ELSE LEAST(ST_Distance(a.geom, b.geom)::real / cd.dist::real, 1.0)::real
     END)) as importance -- =normalized min_dist
 FROM cd CROSS JOIN cities_temp a LEFT JOIN cities_temp b
