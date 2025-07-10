@@ -5,9 +5,6 @@
 -- drop everything we dont need
 DROP FUNCTION IF EXISTS metahelper_cottages;
 DROP FUNCTION IF EXISTS cottages_tile;
-DROP INDEX distance_cottages_geom_idx;
-DROP INDEX cottages_geom_idx;
-DROP INDEX cottages_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_cottages;
 DROP MATERIALIZED VIEW IF EXISTS cottages_temp;
 

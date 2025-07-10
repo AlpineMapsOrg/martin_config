@@ -7,9 +7,6 @@
 -- drop everything we dont need
 DROP FUNCTION IF EXISTS metahelper_peaks;
 DROP FUNCTION IF EXISTS peak_tile;
-DROP INDEX distance_peaks_geom_idx;
-DROP INDEX peaks_geom_idx;
-DROP INDEX peaks_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_peaks;
 DROP MATERIALIZED VIEW IF EXISTS peaks_temp;
 

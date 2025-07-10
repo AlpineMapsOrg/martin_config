@@ -6,9 +6,6 @@
 -- drop everything we dont need
 DROP FUNCTION IF EXISTS metahelper_cities;
 DROP FUNCTION IF EXISTS cities_tile;
-DROP INDEX distance_cities_geom_idx;
-DROP INDEX cities_geom_idx;
-DROP INDEX cities_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_cities;
 DROP MATERIALIZED VIEW IF EXISTS cities_temp;
 
@@ -97,8 +94,6 @@ ORDER BY importance DESC, importance_metric DESC
 CREATE INDEX distance_cities_geom_idx
   ON distance_cities
   USING GIST (geom);
-
-
 
 
 

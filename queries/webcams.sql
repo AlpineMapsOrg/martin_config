@@ -5,9 +5,6 @@
 -- drop everything we dont need
 DROP FUNCTION IF EXISTS metahelper_webcams;
 DROP FUNCTION IF EXISTS webcams_tile;
-DROP INDEX IF EXISTS distance_webcams_geom_idx;
-DROP INDEX IF EXISTS webcams_geom_idx;
-DROP INDEX IF EXISTS webcams_importance_metric_idx;
 DROP MATERIALIZED VIEW IF EXISTS distance_webcams;
 DROP MATERIALIZED VIEW IF EXISTS webcams_temp;
 
