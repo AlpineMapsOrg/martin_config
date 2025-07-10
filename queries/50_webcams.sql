@@ -2,12 +2,6 @@
 -- planet_osm_point.ele
 -- planet_osm_point.tags->'ele'
 
--- drop everything we dont need
-DROP FUNCTION IF EXISTS metahelper_webcams;
-DROP FUNCTION IF EXISTS webcams_tile;
-DROP MATERIALIZED VIEW IF EXISTS distance_webcams;
-DROP MATERIALIZED VIEW IF EXISTS webcams_temp;
-
 -- temp view for webcams
 CREATE MATERIALIZED VIEW webcams_temp AS
     -- combines osm data with external webcam data table

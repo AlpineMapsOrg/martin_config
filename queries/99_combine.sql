@@ -1,7 +1,5 @@
 -- combines multiple tiles into one
 
-DROP FUNCTION IF EXISTS poi_v1;
-
 CREATE OR REPLACE
     FUNCTION poi_v1(z integer, x integer, y integer)
     RETURNS bytea AS $$

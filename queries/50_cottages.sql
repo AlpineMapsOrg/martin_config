@@ -2,12 +2,6 @@
 -- planet_osm_point.ele 
 -- planet_osm_point.tags->'ele'
 
--- drop everything we dont need
-DROP FUNCTION IF EXISTS metahelper_cottages;
-DROP FUNCTION IF EXISTS cottages_tile;
-DROP MATERIALIZED VIEW IF EXISTS distance_cottages;
-DROP MATERIALIZED VIEW IF EXISTS cottages_temp;
-
 -- view for cottages
 -- CREATE VIEW cottages AS 
 CREATE MATERIALIZED VIEW cottages_temp AS
