@@ -22,6 +22,10 @@ all available webcams from IT-WMS are available under the link below in a json f
 https://www.it-wms.com/wp-content/themes/wmsweb/assets/locations/mdata.json
 
 
+## foto-webcam.eu
+json link at:
+https://www.foto-webcam.eu/webcam/include/metadata.php?center=&wc=include&callback=jQuery33109016810021423278_1752693289484&_=1752693289485
+
 # Convert to SQL
 
 1. activate virutal environment
