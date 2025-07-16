@@ -39,7 +39,6 @@ CREATE MATERIALIZED VIEW webcams_temp AS
         -- if you ever want to add other webcams you can use the following sql command to see what other webcam services are available
         -- split_part(data->'contact:webcam', '/', 3)
         AND planet_osm_point.tags->'contact:webcam' LIKE ANY (ARRAY[
-            '%foto-webcam.eu%',
             '%terra-hd.de%',
             '%livecam-hd.eu%',
             '%landgasthof-adler.at%',
