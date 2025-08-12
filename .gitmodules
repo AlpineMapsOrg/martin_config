@@ -1,0 +1,3 @@
+[submodule "openmaptiles"]
+	path = openmaptiles
+	url = git@github.com:AlpineMapsOrg/openmaptiles.git

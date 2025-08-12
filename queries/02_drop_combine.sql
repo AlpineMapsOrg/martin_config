@@ -1,2 +1,0 @@
-DROP FUNCTION IF EXISTS poi_v1;
-

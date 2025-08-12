@@ -1,0 +1,53 @@
+important|                   keys                    | entries_with_values | distinct_value_amount |                                                                             value                                                                              
+x| postal_code                               |1490|533|" {""1210,2100,2103"",2073}"
+x| wikidata                                  |1351|1351| {Q1000812,Q100548863}
+x| wikipedia                                 |851|849|" {""cs:Pohoří na Šumavě"",de:Aistental}"
+x| population:date                           |636|28| {01.01.2017,2001}
+x| name:de                                   |578|569| {Abstall,Albrecht-Kasimir-Hof}
+x| website                                   |270|266|" {""Gemeinde Pamhagen - NATUR GENUSS ERLEBNIShttps://www.gemeinde-pamhagen.at"",https://gols.at/}"
+x| population:source                         |22|2|" {""Statistik Austria"",NULL}"
+~| alt_name                                  |339|327| {8511,Altdebant}
+| openGeoDB:loc_id                          |794|792| {151254,29130}
+| openGeoDB:community_identification_number |792|787| {2061801,2063604}
+| ref:at:okz                                |780|779| {00008,00229}
+| ref:at:gkz                                |778|610| {1030401,1080703}
+| openGeoDB:layer                           |767|5| {6,6;7,7,8,NULL}
+| openGeoDB:type                            |747|8| {100600000,Gemeinde,Gemeinde;Ort,Markt,Ort,Ortsteil,Stadt,NULL}
+| openGeoDB:auto_update                     |744|5|" {population,""population,is_in"",""population,name,is_in"",""population,place,name,is_in"",NULL}"
+| openGeoDB:postal_codes                    |716|349| {2011,2053}
+| openGeoDB:version                         |702|3|" {""0.2.6.11 / 2007-12-04 / http://fa-technik.adfc.de/code/opengeodb/dump/"",0.2.6.11%20/%202007-12-04%20/%20http://fa-technik.adfc.de/code/opengeodb/dump/,NULL}"
+| openGeoDB:name                            |685|664| {Absam,Aham}
+| openGeoDB:sort_name                       |668|640| {ABSAM,AHAM}
+| openGeoDB:population                      |659|459| {101,105}
+| openGeoDB:location                        |644|5| {locality,locality;political_structure,political_structure,postal_code_area,NULL}
+| openGeoDB:is_in_loc_id                    |638|249| {29410,30255}
+| openGeoDB:is_in                           |565|228|" {""Alkoven,Eferding,Oberösterreich,Österreich,Europe"",""Altmelon,Zwettl,Niederösterreich,Österreich,Europe""}"
+| name:hu                                   |453|449| {Abdalóc,Alsólászló}
+| name:ru                                   |449|444| {Абтенау,Алланд}
+| name:sl                                   |408|373| {Apače,Bajdiše}
+| name:hr                                   |302|297| {Andava,Beč}
+| short_name                                |159|145| {Allersdorf,Arndorf}
+| name:uk                                   |126|127| {Айзенштадт,Апетлон}
+| name:cs                                   |114|114| {Aigen-Drkolná,Bíteš}
+| opengeodb:lon                             |113|114| {10.187071,10.8670377}
+| opengeodb:lat                             |110|111| {46.9671638,47.2082442}
+| name:zh                                   |101|101| {丁斯,伊姆斯特}
+| name:sk                                   |99|98|" {Bratisej,""Chorvátsky Ogrún""}"
+| old_name                                  |62|63|" {""Abtenau; Appenau"",Böhmischkrut}"
+| is_in                                     |58|30|" {""Ampass,Innsbruck-Land,Tirol,Österreich,Europe"",""Hatting,Innsbruck-Land,Tirol,Österreich,Europe""}"
+| official_name                             |57|58|" {""Aach i.Allgäu"",Bahnhof}"
+| name:rmc                                  |53|54| {Bandula,Boslina}
+| addr:postcode                             |43|30| {2500,3204}
+| population:note                           |41|4|" {""Einwohner gelten für die gesamte Katastralgemeinde"",""population unplausibel"",""population unrealistisch"",NULL}"
+| name:bar                                  |37|38| {Ådnet,Fuadaspumbeag}
+| wikimedia_commons                         |30|31|" {""Category:Eggendorf (Gemeinde Hartberg)"",Category:Goldgeben}"
+| name:sr                                   |29|30| {Ајзенштат,Вашкерестеш}
+| alt_name:uk                               |24|25| {Блудеш,Гетцис}
+| loc_name                                  |21|20| {Aug,Enzersdorf}
+| full_name                                 |17|18|" {""Breitenbrunn am Neusiedler See"",""Sankt Anna am Aigen""}"
+| name:ka                                   |16|17| {გრაცი,ზალცბურგი}
+| name:en                                   |16|17| {Babniak/Babnjak,Ebensee}
+| name:ja                                   |15|16| {イムスト,キッツビュール}
+| description                               |15|15|" {""Bevölkerung der Gemeinde Adnet, Ortsteil Adnet=1517"",""Höllersberg wurde im Zuge der Ortsbenennung am 1995-10-17 zu Althöllersberg""}"
+| name:fur                                  |11|12|" {Catès-Mude,""San Stiefin""}"
+| name:ar                                   |11|12|" {إنسبروك,""سانت بولتن""}"

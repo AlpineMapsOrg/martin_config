@@ -4,6 +4,7 @@ In this folder are the files/configs for the production server for the TU Wien t
 
 Please note that the password for the postgresql server has been changed to MARTINPASSWORD. Replace this placeholder with the password with the actual password of the database user used. 
 
+# Labels
 
 ## Adding specific features
 
@@ -43,7 +44,16 @@ sudo -umartin psql -Umartin gis -f 99_combine.sql
 
 ```
 
+# Vectortiles
 
-## Applying changes
+1. Execute the export.sh in the openmaptiles repo in the subfolder tools. This provides an sql dump of the docker server. 
+2. Copy the full.sql file to the openmaptiles/tools/deploy folder
+3. Override the deploy/config to openmaptiles/tools/deploy/config
+4. package the openmaptiles/tools/deploy and send it to the server
+5. override the martin config script on the server with the new one
+6. Execute the import.sh file on the server
+
+
+# Applying changes
 
 At the end you have to (re)start the martin server by executing the ```./update_docker.sh``` script.

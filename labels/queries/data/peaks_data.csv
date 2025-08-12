@@ -1,0 +1,31 @@
+important|                  keys                   | entries_with_values | distinct_value_amount |                                                                                   value                                                                                   
+x| wikidata                                |4391|4324| {Q1000705,Q101411156}
+x| wikipedia                               |1754|1687|" {ceb:Buchniklkogel,""ceb:Grosser Lanschütz""}"
+x| summit:cross                            |1698|5| {no,pole,separate,yes,NULL}
+x| summit:register                         |742|4| {no,seperate,yes,NULL}
+x| name:de                                 |477|467|" {""Achomitzer Berg / Schönwipfel"",Alpeleskopf}"
+x| prominence                              |229|204| {1010,1033}
+x| description                             |62|58|" {""4ter Turm des Kopftörlgrats"",""Aussicht heute weitgehend durch Wald verstellt""}"
+x| inscription                             |26|27|" {""BALBER STEINE"",""Dem Herrgott und der Heimat zu Liebe errichtet Oktober 1983 Naturfreunde St.Martin-Karlsbach""}"
+~| alt_name                                |820|801| {Aberg,Ackerschneid}
+~| massif                                  |509|21| {Dachstein,Hochschwab}
+| ref:avf                                 |394|336| {1003,1016}
+| name:it                                 |305|296|" {""Biegenköpfe Sud"",""Cappa d'Oro""}"
+| old_name                                |192|191| {Aich,Altenkogel;Eckkopf}
+| communication:amateur_radio:sota        |189|189| {OE/BL-012,OE/TL-003}
+| communication:amateur_radio:sota:points |189|7| {1,10,2,4,6,8,NULL}
+| wikimedia_commons                       |171|172|" {""Category:Admonter Kalbling"",Category:Agglsspitze}"
+| name:sl                                 |156|156|" {Baba,""Božičev vrh""}"
+| ele:source                              |59|16|" {""Airborne Laserscanning des Land OÖ, https://doris.ooe.gv.at"",""Digitales Geländemodell auf https://gis.stmk.gv.at""}"
+| name:ru                                 |48|48| {Айскёгеле,Бренн-Когель}
+| loc_name                                |47|48|" {""Alte Scheiter"",""die Figl""}"
+| alt_name:de                             |33|34|" {""Achomitzer Berg;Achomitzer Kupf"",""Breite Koschuta""}"
+| wpt_description                         |28|29|" {""12-SEP-10 11:05:10"",Birgitzköpfl}"
+| url                                     |28|27| {http://de.wikipedia.org/wiki/Villgratner_Berge,https://bergtourentipp-tirol.at/bergtouren/bergtour-schafmarebenkogel/}
+| image                                   |25|25|" {""File:Brunnkogel, Marchkarspitze mit Gipfelkreuz.jpg"",https://bergtourentipp-tirol.at/wp-content/uploads/2022/07/2-Gipfeltour-Imsterberger-Kreuz-Kreuzjoch-Venet_16.jpg}"
+| name:fur                                |24|25|" {Avostanis,""Cjavàl di Pontébe""}"
+| name:bar                                |20|21| {Anzabeag,Guggn}
+| wheelchair                              |15|3| {limited,no,NULL}
+| wpt_symbol                              |12|3|" {Summit,""Trail Head"",NULL}"
+| alt_name:sl                             |11|12|" {""Lepi Vrh"",Petelinjek}"
+| name:zh                                 |11|12| {卡倫山,松嫩約赫山}

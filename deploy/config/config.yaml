@@ -1,354 +1,359 @@
 postgres:
-  connection_string: postgresql://martin:MARTINPASSWORD@172.17.0.1:5432/gis
-  auto_publish: true
-  max_feature_count: 100
-  tables:
-    icesheet_outlines:
-      schema: public
-      table: icesheet_outlines
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - -180.0
-      - -85.0511287798066
-      - 180.0
-      - -60.3551539
-      geometry_type: LINESTRING
-      properties:
-        ice_edge: varchar
-    icesheet_polygons:
-      schema: public
-      table: icesheet_polygons
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - -180.0
-      - -85.0511287798066
-      - 180.0
-      - -60.3551539
-      geometry_type: POLYGON
-      properties:
-        fid: numeric
-    ne_110m_admin_0_boundary_lines_land:
-      schema: public
-      table: ne_110m_admin_0_boundary_lines_land
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - -140.99778
-      - -54.896809999999995
-      - 141.03385176001382
-      - 70.16419
-      geometry_type: LINESTRING
-      properties:
-        brk_a3: varchar
-        fclass_ar: varchar
-        fclass_bd: varchar
-        fclass_br: varchar
-        fclass_cn: varchar
-        fclass_de: varchar
-        fclass_eg: varchar
-        fclass_es: varchar
-        fclass_fr: varchar
-        fclass_gb: varchar
-        fclass_gr: varchar
-        fclass_id: varchar
-        fclass_il: varchar
-        fclass_in: varchar
-        fclass_iso: varchar
-        fclass_it: varchar
-        fclass_jp: varchar
-        fclass_ko: varchar
-        fclass_ma: varchar
-        fclass_nl: varchar
-        fclass_np: varchar
-        fclass_pk: varchar
-        fclass_pl: varchar
-        fclass_ps: varchar
-        fclass_pt: varchar
-        fclass_ru: varchar
-        fclass_sa: varchar
-        fclass_se: varchar
-        fclass_tlc: varchar
-        fclass_tr: varchar
-        fclass_tw: varchar
-        fclass_ua: varchar
-        fclass_us: varchar
-        fclass_vn: varchar
-        featurecla: varchar
-        min_zoom: numeric
-        name: varchar
-        name_alt: varchar
-        ne_id: numeric
-        scalerank: numeric
-    planet_osm_line:
-      schema: public
-      table: planet_osm_line
-      srid: 3857
-      geometry_column: way
-      geometry_type: LINESTRING
-      properties:
-        access: text
-        addr:housename: text
-        addr:housenumber: text
-        addr:interpolation: text
-        admin_level: text
-        aerialway: text
-        aeroway: text
-        amenity: text
-        barrier: text
-        bicycle: text
-        boundary: text
-        bridge: text
-        building: text
-        construction: text
-        covered: text
-        foot: text
-        highway: text
-        historic: text
-        horse: text
-        junction: text
-        landuse: text
-        layer: int4
-        leisure: text
-        lock: text
-        man_made: text
-        military: text
-        name: text
-        natural: text
-        oneway: text
-        osm_id: int8
-        place: text
-        power: text
-        railway: text
-        ref: text
-        religion: text
-        route: text
-        service: text
-        shop: text
-        surface: text
-        tags: hstore
-        tourism: text
-        tracktype: text
-        tunnel: text
-        water: text
-        waterway: text
-        way_area: float4
-        z_order: int4
-    planet_osm_point:
-      schema: public
-      table: planet_osm_point
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - 8.8933176
-      - 46.1075592003255
-      - 17.7083116
-      - 49.11304919966437
-      geometry_type: POINT
-      properties:
-        access: text
-        addr:housename: text
-        addr:housenumber: text
-        admin_level: text
-        aerialway: text
-        aeroway: text
-        amenity: text
-        barrier: text
-        boundary: text
-        building: text
-        highway: text
-        historic: text
-        junction: text
-        landuse: text
-        layer: int4
-        leisure: text
-        lock: text
-        man_made: text
-        military: text
-        name: text
-        natural: text
-        oneway: text
-        osm_id: int8
-        place: text
-        power: text
-        railway: text
-        ref: text
-        religion: text
-        shop: text
-        tags: hstore
-        tourism: text
-        water: text
-        waterway: text
-    planet_osm_polygon:
-      schema: public
-      table: planet_osm_polygon
-      srid: 3857
-      geometry_column: way
-      geometry_type: GEOMETRY
-      properties:
-        access: text
-        addr:housename: text
-        addr:housenumber: text
-        addr:interpolation: text
-        admin_level: text
-        aerialway: text
-        aeroway: text
-        amenity: text
-        barrier: text
-        bicycle: text
-        boundary: text
-        bridge: text
-        building: text
-        construction: text
-        covered: text
-        foot: text
-        highway: text
-        historic: text
-        horse: text
-        junction: text
-        landuse: text
-        layer: int4
-        leisure: text
-        lock: text
-        man_made: text
-        military: text
-        name: text
-        natural: text
-        oneway: text
-        osm_id: int8
-        place: text
-        power: text
-        railway: text
-        ref: text
-        religion: text
-        route: text
-        service: text
-        shop: text
-        surface: text
-        tags: hstore
-        tourism: text
-        tracktype: text
-        tunnel: text
-        water: text
-        waterway: text
-        way_area: float4
-        z_order: int4
-    planet_osm_roads:
-      schema: public
-      table: planet_osm_roads
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - 9.483953899999998
-      - 46.36769720028178
-      - 17.343195199999997
-      - 49.024227699686335
-      geometry_type: LINESTRING
-      properties:
-        access: text
-        addr:housename: text
-        addr:housenumber: text
-        addr:interpolation: text
-        admin_level: text
-        aerialway: text
-        aeroway: text
-        amenity: text
-        barrier: text
-        bicycle: text
-        boundary: text
-        bridge: text
-        building: text
-        construction: text
-        covered: text
-        foot: text
-        highway: text
-        historic: text
-        horse: text
-        junction: text
-        landuse: text
-        layer: int4
-        leisure: text
-        lock: text
-        man_made: text
-        military: text
-        name: text
-        natural: text
-        oneway: text
-        osm_id: int8
-        place: text
-        power: text
-        railway: text
-        ref: text
-        religion: text
-        route: text
-        service: text
-        shop: text
-        surface: text
-        tags: hstore
-        tourism: text
-        tracktype: text
-        tunnel: text
-        water: text
-        waterway: text
-        way_area: float4
-        z_order: int4
-    simplified_water_polygons:
-      schema: public
-      table: simplified_water_polygons
-      srid: 3857
-      geometry_column: way
-      bounds:
-      - -179.9999999749438
-      - -78.7385903
-      - 179.9999999749438
-      - 85.05112877764508
-      geometry_type: POLYGON
-      properties:
-        x: numeric
-        y: numeric
-    water_polygons:
-      schema: public
-      table: water_polygons
-      srid: 3857
-      geometry_column: way
-      geometry_type: POLYGON
-      properties:
-        x: numeric
-        y: numeric
-    #peaks:
-    #  schema: public
-    #  table: peaks
-    #  srid: 3857
-    #  geometry_column: way
-    #  geometry_type: POINT
-    #  properties:
-    #    name: text
-    #    ele: text
-    #    wikidata: text
-    #    summit_cross: text
-    churches:
-      schema: public
-      table: churches
-      srid: 3857
-      geometry_column: way
-      properties:
-        osm_id: int
-        type: text
-        name: text
-        religion: text
-        denomination: text
-  functions:
-    poi_v1:
-      schema: public
-      function: poi_v1
-      minzoom: 8
-      properties:
-        name: text
-        long: double
-        lat: double
-        importance: double
-        importance_metric: int
+  - connection_string: postgresql://martin:MARTINPASSWORD@172.17.0.1:5432/openmaptiles
+    functions:
+      tiles:
+          schema: public
+          function: getmvt
+  - connection_string: postgresql://martin:MARTINPASSWORD@172.17.0.1:5432/gis
+    auto_publish: true
+    max_feature_count: 100
+    tables:
+      icesheet_outlines:
+        schema: public
+        table: icesheet_outlines
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - -180.0
+        - -85.0511287798066
+        - 180.0
+        - -60.3551539
+        geometry_type: LINESTRING
+        properties:
+          ice_edge: varchar
+      icesheet_polygons:
+        schema: public
+        table: icesheet_polygons
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - -180.0
+        - -85.0511287798066
+        - 180.0
+        - -60.3551539
+        geometry_type: POLYGON
+        properties:
+          fid: numeric
+      ne_110m_admin_0_boundary_lines_land:
+        schema: public
+        table: ne_110m_admin_0_boundary_lines_land
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - -140.99778
+        - -54.896809999999995
+        - 141.03385176001382
+        - 70.16419
+        geometry_type: LINESTRING
+        properties:
+          brk_a3: varchar
+          fclass_ar: varchar
+          fclass_bd: varchar
+          fclass_br: varchar
+          fclass_cn: varchar
+          fclass_de: varchar
+          fclass_eg: varchar
+          fclass_es: varchar
+          fclass_fr: varchar
+          fclass_gb: varchar
+          fclass_gr: varchar
+          fclass_id: varchar
+          fclass_il: varchar
+          fclass_in: varchar
+          fclass_iso: varchar
+          fclass_it: varchar
+          fclass_jp: varchar
+          fclass_ko: varchar
+          fclass_ma: varchar
+          fclass_nl: varchar
+          fclass_np: varchar
+          fclass_pk: varchar
+          fclass_pl: varchar
+          fclass_ps: varchar
+          fclass_pt: varchar
+          fclass_ru: varchar
+          fclass_sa: varchar
+          fclass_se: varchar
+          fclass_tlc: varchar
+          fclass_tr: varchar
+          fclass_tw: varchar
+          fclass_ua: varchar
+          fclass_us: varchar
+          fclass_vn: varchar
+          featurecla: varchar
+          min_zoom: numeric
+          name: varchar
+          name_alt: varchar
+          ne_id: numeric
+          scalerank: numeric
+      planet_osm_line:
+        schema: public
+        table: planet_osm_line
+        srid: 3857
+        geometry_column: way
+        geometry_type: LINESTRING
+        properties:
+          access: text
+          addr:housename: text
+          addr:housenumber: text
+          addr:interpolation: text
+          admin_level: text
+          aerialway: text
+          aeroway: text
+          amenity: text
+          barrier: text
+          bicycle: text
+          boundary: text
+          bridge: text
+          building: text
+          construction: text
+          covered: text
+          foot: text
+          highway: text
+          historic: text
+          horse: text
+          junction: text
+          landuse: text
+          layer: int4
+          leisure: text
+          lock: text
+          man_made: text
+          military: text
+          name: text
+          natural: text
+          oneway: text
+          osm_id: int8
+          place: text
+          power: text
+          railway: text
+          ref: text
+          religion: text
+          route: text
+          service: text
+          shop: text
+          surface: text
+          tags: hstore
+          tourism: text
+          tracktype: text
+          tunnel: text
+          water: text
+          waterway: text
+          way_area: float4
+          z_order: int4
+      planet_osm_point:
+        schema: public
+        table: planet_osm_point
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - 8.8933176
+        - 46.1075592003255
+        - 17.7083116
+        - 49.11304919966437
+        geometry_type: POINT
+        properties:
+          access: text
+          addr:housename: text
+          addr:housenumber: text
+          admin_level: text
+          aerialway: text
+          aeroway: text
+          amenity: text
+          barrier: text
+          boundary: text
+          building: text
+          highway: text
+          historic: text
+          junction: text
+          landuse: text
+          layer: int4
+          leisure: text
+          lock: text
+          man_made: text
+          military: text
+          name: text
+          natural: text
+          oneway: text
+          osm_id: int8
+          place: text
+          power: text
+          railway: text
+          ref: text
+          religion: text
+          shop: text
+          tags: hstore
+          tourism: text
+          water: text
+          waterway: text
+      planet_osm_polygon:
+        schema: public
+        table: planet_osm_polygon
+        srid: 3857
+        geometry_column: way
+        geometry_type: GEOMETRY
+        properties:
+          access: text
+          addr:housename: text
+          addr:housenumber: text
+          addr:interpolation: text
+          admin_level: text
+          aerialway: text
+          aeroway: text
+          amenity: text
+          barrier: text
+          bicycle: text
+          boundary: text
+          bridge: text
+          building: text
+          construction: text
+          covered: text
+          foot: text
+          highway: text
+          historic: text
+          horse: text
+          junction: text
+          landuse: text
+          layer: int4
+          leisure: text
+          lock: text
+          man_made: text
+          military: text
+          name: text
+          natural: text
+          oneway: text
+          osm_id: int8
+          place: text
+          power: text
+          railway: text
+          ref: text
+          religion: text
+          route: text
+          service: text
+          shop: text
+          surface: text
+          tags: hstore
+          tourism: text
+          tracktype: text
+          tunnel: text
+          water: text
+          waterway: text
+          way_area: float4
+          z_order: int4
+      planet_osm_roads:
+        schema: public
+        table: planet_osm_roads
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - 9.483953899999998
+        - 46.36769720028178
+        - 17.343195199999997
+        - 49.024227699686335
+        geometry_type: LINESTRING
+        properties:
+          access: text
+          addr:housename: text
+          addr:housenumber: text
+          addr:interpolation: text
+          admin_level: text
+          aerialway: text
+          aeroway: text
+          amenity: text
+          barrier: text
+          bicycle: text
+          boundary: text
+          bridge: text
+          building: text
+          construction: text
+          covered: text
+          foot: text
+          highway: text
+          historic: text
+          horse: text
+          junction: text
+          landuse: text
+          layer: int4
+          leisure: text
+          lock: text
+          man_made: text
+          military: text
+          name: text
+          natural: text
+          oneway: text
+          osm_id: int8
+          place: text
+          power: text
+          railway: text
+          ref: text
+          religion: text
+          route: text
+          service: text
+          shop: text
+          surface: text
+          tags: hstore
+          tourism: text
+          tracktype: text
+          tunnel: text
+          water: text
+          waterway: text
+          way_area: float4
+          z_order: int4
+      simplified_water_polygons:
+        schema: public
+        table: simplified_water_polygons
+        srid: 3857
+        geometry_column: way
+        bounds:
+        - -179.9999999749438
+        - -78.7385903
+        - 179.9999999749438
+        - 85.05112877764508
+        geometry_type: POLYGON
+        properties:
+          x: numeric
+          y: numeric
+      water_polygons:
+        schema: public
+        table: water_polygons
+        srid: 3857
+        geometry_column: way
+        geometry_type: POLYGON
+        properties:
+          x: numeric
+          y: numeric
+      #peaks:
+      #  schema: public
+      #  table: peaks
+      #  srid: 3857
+      #  geometry_column: way
+      #  geometry_type: POINT
+      #  properties:
+      #    name: text
+      #    ele: text
+      #    wikidata: text
+      #    summit_cross: text
+      churches:
+        schema: public
+        table: churches
+        srid: 3857
+        geometry_column: way
+        properties:
+          osm_id: int
+          type: text
+          name: text
+          religion: text
+          denomination: text
+    functions:
+      poi_v1:
+        schema: public
+        function: poi_v1
+        minzoom: 8
+        properties:
+          name: text
+          long: double
+          lat: double
+          importance: double
+          importance_metric: int
 pmtiles:
   paths:
     - /config/eaws-regions.pmtiles

@@ -1,0 +1,25 @@
+important|       keys       | entries_with_values | distinct_value_amount |                                                             value                                                              
+~| cuisine          |47|7| {alpine_hut,austrian,local,pizza,regional,traditional,NULL}
+~| addr:place       |22|23| {Almen,Fischerndorf}
+x| website          |98|99| {http://litzlhofalm.at/,https://elberfelderhuette.com}
+x| phone            |75|76|" {""0043 650 5090 763"",06766410851}"
+x| addr:postcode    |75|63| {3193,5505}
+x| addr:city        |73|64| {Absam,Altaussee}
+x| wikidata         |71|72| {Q1029765,Q1253367}
+x| wikipedia        |66|67|" {de:Adolf-Noßberger-Hütte,""de:Anhalter Hütte""}"
+x| addr:country     |55|3| {AT,DE,NULL}
+x| addr:street      |51|46| {Alm,Bärental}
+x| email            |30|31| {anfrage@biberacher-huette.at,http://www.heimalm-rauris.at}
+x| opening_hours    |26|25|" {""10:00-17:00, Fr off"",""Jun 15-Oct 15""}"
+x| shower           |21|4| {fee,no,yes,NULL}
+x| contact:phone    |17|18|" {""+39 0473 868188"",""+43 660 664 7428""}"
+x| contact:website  |12|13| {https://bochumer-huette.jimdofree.com/,https://www.dav-obererneckar.de/Huetten_Wege/Anhalter%20Huette}
+x| contact:email    |12|13| {anhalterhuette@gmail.com,info@bayreuther-huette.de}
+x| internet_access  |12|4| {no,wlan,yes,NULL}
+x| capacity         |14|13| {144,40}
+x| description      |12|13|" {""Buchungen und Anfragen unter +43 (0)664 / 73 55 95 10 bzw. +43 (0)4783 / 25 36 oder per E-Mail info@poldis-jausenstation.at +  http://www.poldis-jausenstation.at/"",""Geöffnet während der Alpzeit""}"
+| massif           |29|17|" {Ankogelgruppe,""Karawanken u. Bachergebirge""}"
+| alt_name         |22|23|" {""Badgasteiner Hütte"",""Doris Fleisskuchl""}"
+| at_bev:addr_date |15|9| {2016-10-02,2017-04-07,2017-10-01,2018-04-02,2018-10-01,2019-04-01,2022-10-01,2023-04-15,NULL}
+| name:de          |13|14|" {Ederhütte,""Jagdhütte Zeiritz 1599m""}"
+| outdoor_seating  |11|2| {yes,NULL}
