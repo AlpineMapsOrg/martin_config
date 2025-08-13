@@ -116,7 +116,6 @@ CREATE MATERIALIZED VIEW cottages_temp AS
             planet_osm_polygon."tourism" = 'wilderness_hut'::text 
             -- planet_osm_polygon."tourism" = 'chalet'::text
         ) AND name IS NOT NULL
-        AND osm_id > 0 -- sometimes there are negative ids -> filter them out... (those ids are used for external data? https://github.com/osm2pgsql-dev/osm2pgsql/issues/1097)
     )) a
 
     ORDER BY importance_metric desc;
