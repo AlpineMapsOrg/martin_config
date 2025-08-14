@@ -8,4 +8,4 @@ docker container rm -f martin
 docker run --name martin \
 	--net=host \
 	--restart=always --detach -v ${SCRIPT_DIR}/config/:/config \
-	ghcr.io/maplibre/martin --config config/config_vector.yaml --webui enable-for-all
+	ghcr.io/maplibre/martin --config config/config.yaml --webui enable-for-all
